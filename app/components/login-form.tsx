@@ -186,153 +186,154 @@
 //   );
 // }
 
-import React, { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import type React from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/ui/button";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
 
 const mobileSchema = z.object({
-  mobile: z.string().regex(/^\d{10}$/, "Enter a valid 10-digit mobile number"),
+	mobile: z.string().regex(/^\d{10}$/, "Enter a valid 10-digit mobile number"),
 });
 
 const otpSchema = z.object({
-  otp: z.string().regex(/^\d{4}$/, "OTP must be 4 digits"),
+	otp: z.string().regex(/^\d{4}$/, "OTP must be 4 digits"),
 });
 
 type MobileForm = z.infer<typeof mobileSchema>;
 type OtpForm = z.infer<typeof otpSchema>;
 
 interface LoginFormProps extends React.HTMLAttributes<HTMLDivElement> {
-  onLogin: (data: { mobile: string }) => void;
+	onLogin: (data: { mobile: string }) => void;
 }
 
 export function LoginForm({ onLogin, ...props }: LoginFormProps) {
-  const [step, setStep] = useState<"mobile" | "otp">("mobile");
-  const [mobile, setMobile] = useState("");
+	const [step, setStep] = useState<"mobile" | "otp">("mobile");
+	const [mobile, setMobile] = useState("");
 
-  // Step 1: mobile form
-  const {
-    register: registerMobile,
-    handleSubmit: submitMobile,
-    formState: { errors: mobileErrors },
-  } = useForm<MobileForm>({ resolver: zodResolver(mobileSchema) });
+	// Step 1: mobile form
+	const {
+		register: registerMobile,
+		handleSubmit: submitMobile,
+		formState: { errors: mobileErrors },
+	} = useForm<MobileForm>({ resolver: zodResolver(mobileSchema) });
 
-  // Step 2: otp form
-  const {
-    register: registerOtp,
-    handleSubmit: submitOtp,
-    formState: { errors: otpErrors },
-  } = useForm<OtpForm>({ resolver: zodResolver(otpSchema) });
+	// Step 2: otp form
+	const {
+		register: registerOtp,
+		handleSubmit: submitOtp,
+		formState: { errors: otpErrors },
+	} = useForm<OtpForm>({ resolver: zodResolver(otpSchema) });
 
-  const handleGetOtp = (data: MobileForm) => {
-    setMobile(data.mobile);
-    setStep("otp");
-  };
+	const handleGetOtp = (data: MobileForm) => {
+		setMobile(data.mobile);
+		setStep("otp");
+	};
 
-  const handleVerifyOtp = (data: OtpForm) => {
-    if (data.otp.length === 4) {
-      onLogin({ mobile });
-    }
-  };
+	const handleVerifyOtp = (data: OtpForm) => {
+		if (data.otp.length === 4) {
+			onLogin({ mobile });
+		}
+	};
 
-  return (
-    <div className="flex h-screen  w-full items-center justify-center bg-gradient-to-br from-indigo-200 via-purple-600 to-pink-500">
-      <Card className="w-full max-w-md" {...props}>
-        <CardHeader>
-          <CardTitle className="text-2xl text-indigo-600">
-            Welcome Back 👋
-          </CardTitle>
-          <CardDescription>Login with your mobile number</CardDescription>
-        </CardHeader>
+	return (
+		<div className="flex h-screen  w-full items-center justify-center bg-gradient-to-br from-indigo-200 via-purple-600 to-pink-500">
+			<Card className="w-full max-w-md" {...props}>
+				<CardHeader>
+					<CardTitle className="text-2xl text-indigo-600">
+						Welcome Back 👋
+					</CardTitle>
+					<CardDescription>Login with your mobile number</CardDescription>
+				</CardHeader>
 
-        <CardContent>
-          {step === "mobile" && (
-            <form
-              onSubmit={submitMobile(handleGetOtp)}
-              className="flex flex-col gap-6"
-            >
-              <div className="grid gap-2">
-                <Label htmlFor="mobile">Mobile Number</Label>
-                <Input
-                  id="mobile"
-                  inputMode="numeric"
-                  maxLength={10}
-                  placeholder="Enter mobile number"
-                  {...registerMobile("mobile")}
-                />
-                {mobileErrors.mobile && (
-                  <p className="text-sm text-red-500">
-                    {mobileErrors.mobile.message}
-                  </p>
-                )}
-              </div>
-              <Button
-                type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700"
-              >
-                Get OTP
-              </Button>
-            </form>
-          )}
+				<CardContent>
+					{step === "mobile" && (
+						<form
+							onSubmit={submitMobile(handleGetOtp)}
+							className="flex flex-col gap-6"
+						>
+							<div className="grid gap-2">
+								<Label htmlFor="mobile">Mobile Number</Label>
+								<Input
+									id="mobile"
+									inputMode="numeric"
+									maxLength={10}
+									placeholder="Enter mobile number"
+									{...registerMobile("mobile")}
+								/>
+								{mobileErrors.mobile && (
+									<p className="text-sm text-red-500">
+										{mobileErrors.mobile.message}
+									</p>
+								)}
+							</div>
+							<Button
+								type="submit"
+								className="w-full bg-indigo-600 hover:bg-indigo-700"
+							>
+								Get OTP
+							</Button>
+						</form>
+					)}
 
-          {step === "otp" && (
-            <form
-              onSubmit={submitOtp(handleVerifyOtp)}
-              className="flex flex-col gap-6"
-            >
-              <div className="grid gap-2">
-                <Label htmlFor="otp">Enter OTP</Label>
-                <Input
-                  id="otp"
-                  inputMode="numeric"
-                  maxLength={4}
-                  placeholder="Enter 4-digit OTP"
-                  {...registerOtp("otp")}
-                />
-                {otpErrors.otp && (
-                  <p className="text-sm text-red-500">
-                    {otpErrors.otp.message}
-                  </p>
-                )}
-                <p className="text-xs text-gray-500 text-center">
-                  Demo OTP: <span className="font-semibold">1234</span>
-                </p>
-              </div>
-              <Button
-                type="submit"
-                className="w-full bg-green-600 hover:bg-green-700"
-              >
-                Verify & Login
-              </Button>
-            </form>
-          )}
-        </CardContent>
+					{step === "otp" && (
+						<form
+							onSubmit={submitOtp(handleVerifyOtp)}
+							className="flex flex-col gap-6"
+						>
+							<div className="grid gap-2">
+								<Label htmlFor="otp">Enter OTP</Label>
+								<Input
+									id="otp"
+									inputMode="numeric"
+									maxLength={4}
+									placeholder="Enter 4-digit OTP"
+									{...registerOtp("otp")}
+								/>
+								{otpErrors.otp && (
+									<p className="text-sm text-red-500">
+										{otpErrors.otp.message}
+									</p>
+								)}
+								<p className="text-xs text-gray-500 text-center">
+									Demo OTP: <span className="font-semibold">1234</span>
+								</p>
+							</div>
+							<Button
+								type="submit"
+								className="w-full bg-green-600 hover:bg-green-700"
+							>
+								Verify & Login
+							</Button>
+						</form>
+					)}
+				</CardContent>
 
-        <CardFooter className="flex flex-col gap-2">
-          {step === "otp" && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setStep("mobile")}
-              className="w-full"
-            >
-              Change Number
-            </Button>
-          )}
-        </CardFooter>
-      </Card>
-    </div>
-  );
+				<CardFooter className="flex flex-col gap-2">
+					{step === "otp" && (
+						<Button
+							type="button"
+							variant="outline"
+							onClick={() => setStep("mobile")}
+							className="w-full"
+						>
+							Change Number
+						</Button>
+					)}
+				</CardFooter>
+			</Card>
+		</div>
+	);
 }

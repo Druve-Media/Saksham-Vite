@@ -1,16 +1,28 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import type { User } from "@/beans/user";
 
 interface AuthState {
-  isAuthenticated: boolean;
-  user: User | null;
-  login: (user: User) => void;
-  logout: () => void;
+	isAuthenticated: boolean;
+	user: User | null;
+	login: (user: User) => void;
+	logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  isAuthenticated: false,
-  user: null,
-  login: (user) => set({ isAuthenticated: true, user }),
-  logout: () => set({ isAuthenticated: false, user: null }),
-}));
+export const useAuthStore = create<AuthState>()(
+	persist(
+		(set) => ({
+			isAuthenticated: false,
+			user: null,
+			login: (user) => set({ isAuthenticated: true, user }),
+			logout: () => set({ isAuthenticated: false, user: null }),
+		}),
+		{
+			name: "auth-storage",
+			partialize: (state) => ({
+				isAuthenticated: state.isAuthenticated,
+				user: state.user,
+			}),
+		},
+	),
+);
