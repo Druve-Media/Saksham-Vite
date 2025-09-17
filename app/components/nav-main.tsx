@@ -1,5 +1,5 @@
 import { ChevronRight, type LucideIcon } from "lucide-react";
-
+import { useNavigate } from "react-router";
 import {
 	Collapsible,
 	CollapsibleContent,
@@ -30,6 +30,7 @@ export function NavMain({
 		}[];
 	}[];
 }) {
+	const navigate = useNavigate();
 	return (
 		<SidebarGroup>
 			{/* <SidebarGroupLabel>Platform</SidebarGroupLabel> */}
@@ -51,18 +52,16 @@ export function NavMain({
 											asChild
 											tooltip={item.title}
 											isActive={item.isActive}
+											onClick={() => {
+												item.url !== "#" ? navigate(item.url) : "#";
+											}}
+											className="cursor-pointer"
 										>
-											<a
-												href={
-													item.url !== "#"
-														? item.url
-														: item.items?.[0]?.url || "#"
-												}
-											>
+											<div className="flex justify-between items-center">
 												{item.icon && <item.icon />}
 												<span>{item.title}</span>
 												<ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-											</a>
+											</div>
 										</SidebarMenuButton>
 									</CollapsibleTrigger>
 									<CollapsibleContent>
@@ -72,10 +71,17 @@ export function NavMain({
 													<SidebarMenuSubButton
 														asChild
 														isActive={subItem.isActive}
+														onClick={() => {
+															navigate(subItem.url);
+														}}
+														className="cursor-pointer"
 													>
-														<a href={subItem.url}>
+														{/* <a href={subItem.url}> */}
+														<div>
 															<span>{subItem.title}</span>
-														</a>
+														</div>
+
+														{/* </a> */}
 													</SidebarMenuSubButton>
 												</SidebarMenuSubItem>
 											))}

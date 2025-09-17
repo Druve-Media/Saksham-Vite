@@ -49,10 +49,10 @@ export default function SocietyAdminLayout() {
 					</div>
 					<div className="ml-auto flex items-center gap-2 px-4">
 						<ModeToggle />
-						<Avatar className="h-8 w-8">
+						{/* <Avatar className="h-8 w-8">
 							<AvatarImage src="/avatars/shadcn.jpg" alt="User" />
 							<AvatarFallback>U</AvatarFallback>
-						</Avatar>
+						</Avatar> */}
 					</div>
 				</header>
 				<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
