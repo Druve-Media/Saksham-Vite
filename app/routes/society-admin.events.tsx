@@ -156,6 +156,7 @@ export default function EventsPage() {
 								backgroundColor: "#ffb400",
 								color: "#1a5fd8",
 								border: "none",
+								cursor: "pointer",
 							}}
 						>
 							Add Event
@@ -379,7 +380,11 @@ export default function EventsPage() {
 									type="button"
 									variant="outline"
 									onClick={() => setIsDialogOpen(false)}
-									style={{ borderColor: "#1a5fd8", color: "#1a5fd8" }}
+									style={{
+										borderColor: "#1a5fd8",
+										color: "#1a5fd8",
+										cursor: "pointer",
+									}}
 								>
 									Cancel
 								</Button>
@@ -389,6 +394,7 @@ export default function EventsPage() {
 										backgroundColor: "#ffb400",
 										color: "#1a5fd8",
 										border: "none",
+										cursor: "pointer",
 									}}
 								>
 									Save
@@ -463,6 +469,7 @@ export default function EventsPage() {
 													backgroundColor: "#1a5fd8",
 													color: "#fff",
 													border: "none",
+													cursor: "pointer",
 												}}
 											>
 												Update
@@ -473,6 +480,7 @@ export default function EventsPage() {
 													backgroundColor: "#ffb400",
 													color: "#1a5fd8",
 													border: "none",
+													cursor: "pointer",
 												}}
 											>
 												🗑

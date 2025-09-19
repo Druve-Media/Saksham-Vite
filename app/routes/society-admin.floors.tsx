@@ -138,7 +138,14 @@ export default function FloorsPage() {
 				<h1 className="text-2xl font-semibold">Floors</h1>
 				<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 					<DialogTrigger asChild>
-						<Button className="bg-red-600 hover:bg-red-700">
+						<Button
+							style={{
+								backgroundColor: "#ffb400",
+								color: "#1a5fd8",
+								border: "none",
+								cursor: "pointer",
+							}}
+						>
 							<IconPlus className="mr-2 h-4 w-4" />
 							Add Floor
 						</Button>
@@ -203,12 +210,25 @@ export default function FloorsPage() {
 							</div>
 						</div>
 						<DialogFooter>
-							<Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+							<Button
+								variant="outline"
+								onClick={() => setIsDialogOpen(false)}
+								style={{
+									borderColor: "#1a5fd8",
+									color: "#1a5fd8",
+									cursor: "pointer",
+								}}
+							>
 								Cancel
 							</Button>
 							<Button
 								onClick={handleAdd}
-								className="bg-red-600 hover:bg-red-700"
+								style={{
+									backgroundColor: "#ffb400",
+									color: "#1a5fd8",
+									border: "none",
+									cursor: "pointer",
+								}}
 							>
 								Add
 							</Button>
@@ -249,12 +269,17 @@ export default function FloorsPage() {
 						<SelectItem value="under maintenance">Under Maintenance</SelectItem>
 					</SelectContent>
 				</Select>
-				<Button variant="outline" size="sm">
-					<IconFilter className="mr-2 h-4 w-4" />
+				<Button variant="outline" size="sm" style={{ cursor: "pointer" }}>
+					<IconFilter className="mr-2 h-4 w-4" style={{ color: "#1a5fd8" }} />
 					FILTERS
 				</Button>
-				<Button variant="outline" size="sm" onClick={handleExport}>
-					<IconDownload className="mr-2 h-4 w-4" />
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={handleExport}
+					style={{ cursor: "pointer" }}
+				>
+					<IconDownload className="mr-2 h-4 w-4" style={{ color: "#1a5fd8" }} />
 					Export
 				</Button>
 			</div>
@@ -288,7 +313,10 @@ export default function FloorsPage() {
 										<TableCell>
 											<div className="flex items-center gap-3">
 												<div className="flex h-8 w-8 items-center justify-center rounded bg-[#1a5fd8]/10">
-													<IconHome className="h-4 w-4 text-blue-600" />
+													<IconHome
+														className="h-4 w-4"
+														style={{ color: "#1a5fd8" }}
+													/>
 												</div>
 												<span className="font-medium">{floor.floorNumber}</span>
 											</div>
@@ -324,14 +352,28 @@ export default function FloorsPage() {
 										</TableCell>
 										<TableCell>
 											<div className="flex gap-2">
-												<Button variant="outline" size="sm">
+												<Button
+													variant="outline"
+													size="sm"
+													style={{
+														backgroundColor: "#ffb400",
+														color: "#1a5fd8",
+														borderColor: "#ffb400",
+														cursor: "pointer",
+													}}
+												>
 													<IconEdit className="mr-2 h-4 w-4" />
 													UPDATE
 												</Button>
 												<Button
 													variant="outline"
 													size="sm"
-													className="text-red-600 border-red-600 hover:bg-red-50"
+													style={{
+														backgroundColor: "#1a5fd8",
+														color: "white",
+														borderColor: "#1a5fd8",
+														cursor: "pointer",
+													}}
 												>
 													<IconTrash className="h-4 w-4" />
 												</Button>
@@ -352,13 +394,26 @@ export default function FloorsPage() {
 					results
 				</p>
 				<div className="flex items-center gap-2">
-					<Button variant="outline" size="sm" disabled>
+					<Button
+						variant="outline"
+						size="sm"
+						disabled
+						style={{ cursor: "not-allowed" }}
+					>
 						&lt;
 					</Button>
-					<Button variant="default" size="sm" className="bg-[#1a5fd8]">
+					<Button
+						variant="default"
+						size="sm"
+						style={{
+							backgroundColor: "#1a5fd8",
+							color: "white",
+							cursor: "pointer",
+						}}
+					>
 						1
 					</Button>
-					<Button variant="outline" size="sm">
+					<Button variant="outline" size="sm" style={{ cursor: "pointer" }}>
 						&gt;
 					</Button>
 				</div>

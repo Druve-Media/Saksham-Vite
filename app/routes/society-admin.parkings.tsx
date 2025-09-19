@@ -49,7 +49,7 @@ const parkingSpots = [
 		assignedTo: "John Smith",
 		apartmentNumber: "101",
 		vehicleNumber: "MH-12-AB-1234",
-		monthlyFee: "$50",
+		monthlyFee: "₹50",
 	},
 	{
 		id: 2,
@@ -60,7 +60,7 @@ const parkingSpots = [
 		assignedTo: "--",
 		apartmentNumber: "--",
 		vehicleNumber: "--",
-		monthlyFee: "$50",
+		monthlyFee: "₹50",
 	},
 	{
 		id: 3,
@@ -71,7 +71,7 @@ const parkingSpots = [
 		assignedTo: "Jane Doe",
 		apartmentNumber: "102",
 		vehicleNumber: "MH-12-CD-5678",
-		monthlyFee: "$20",
+		monthlyFee: "₹20",
 	},
 	{
 		id: 4,
@@ -82,7 +82,7 @@ const parkingSpots = [
 		assignedTo: "Mike Johnson",
 		apartmentNumber: "201",
 		vehicleNumber: "MH-12-EF-9012",
-		monthlyFee: "$60",
+		monthlyFee: "₹60",
 	},
 	{
 		id: 5,
@@ -93,7 +93,7 @@ const parkingSpots = [
 		assignedTo: "--",
 		apartmentNumber: "--",
 		vehicleNumber: "--",
-		monthlyFee: "$55",
+		monthlyFee: "₹55",
 	},
 	{
 		id: 6,
@@ -104,7 +104,7 @@ const parkingSpots = [
 		assignedTo: "Sarah Brown",
 		apartmentNumber: "301",
 		vehicleNumber: "MH-12-GH-3456",
-		monthlyFee: "$25",
+		monthlyFee: "₹25",
 	},
 ];
 
@@ -160,7 +160,7 @@ export default function ParkingsPage() {
 				<h1 className="text-2xl font-semibold">Parking Management</h1>
 				<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 					<DialogTrigger asChild>
-						<Button className="bg-red-600 hover:bg-red-700">
+						<Button className="bg-[#ffb400] hover:bg-[#ffb400]/80 cursor-pointer">
 							<IconPlus className="mr-2 h-4 w-4" />
 							Add Parking Spot
 						</Button>
@@ -241,12 +241,16 @@ export default function ParkingsPage() {
 							</div>
 						</div>
 						<DialogFooter>
-							<Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+							<Button
+								variant="outline"
+								onClick={() => setIsDialogOpen(false)}
+								className="border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer"
+							>
 								Cancel
 							</Button>
 							<Button
 								onClick={handleAdd}
-								className="bg-red-600 hover:bg-red-700"
+								className="bg-[#1a5fd8] hover:bg-[#1a5fd8]/80 cursor-pointer"
 							>
 								Add
 							</Button>
@@ -298,11 +302,20 @@ export default function ParkingsPage() {
 						<SelectItem value="reserved">Reserved</SelectItem>
 					</SelectContent>
 				</Select>
-				<Button variant="outline" size="sm">
+				<Button
+					variant="outline"
+					size="sm"
+					className="border-[#ffb400] text-[#ffb400] hover:bg-[#ffb400]/10 cursor-pointer"
+				>
 					<IconFilter className="mr-2 h-4 w-4" />
 					FILTERS
 				</Button>
-				<Button variant="outline" size="sm" onClick={handleExport}>
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={handleExport}
+					className="border-[#ffb400] text-[#ffb400] hover:bg-[#ffb400]/10 cursor-pointer"
+				>
 					<IconDownload className="mr-2 h-4 w-4" />
 					Export
 				</Button>
@@ -466,14 +479,18 @@ export default function ParkingsPage() {
 										</TableCell>
 										<TableCell>
 											<div className="flex gap-2">
-												<Button variant="outline" size="sm">
+												<Button
+													variant="outline"
+													size="sm"
+													className="border-[#1a5fd8] text-[#1a5fd8] hover:bg-[#1a5fd8]/10 cursor-pointer"
+												>
 													<IconEdit className="mr-2 h-4 w-4" />
 													UPDATE
 												</Button>
 												<Button
 													variant="outline"
 													size="sm"
-													className="text-red-600 border-red-600 hover:bg-red-50"
+													className="text-red-600 border-red-600 hover:bg-red-50 cursor-pointer"
 												>
 													<IconTrash className="h-4 w-4" />
 												</Button>
@@ -494,13 +511,26 @@ export default function ParkingsPage() {
 					{filteredParkingSpots.length} results
 				</p>
 				<div className="flex items-center gap-2">
-					<Button variant="outline" size="sm" disabled>
+					<Button
+						variant="outline"
+						size="sm"
+						disabled
+						className="cursor-not-allowed"
+					>
 						&lt;
 					</Button>
-					<Button variant="default" size="sm" className="bg-[#1a5fd8]">
+					<Button
+						variant="default"
+						size="sm"
+						className="bg-[#1a5fd8] hover:bg-[#1a5fd8]/80 cursor-pointer"
+					>
 						1
 					</Button>
-					<Button variant="outline" size="sm">
+					<Button
+						variant="outline"
+						size="sm"
+						className="border-[#ffb400] text-[#ffb400] hover:bg-[#ffb400]/10 cursor-pointer"
+					>
 						&gt;
 					</Button>
 				</div>

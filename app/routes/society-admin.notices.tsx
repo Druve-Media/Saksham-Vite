@@ -119,13 +119,21 @@ export default function NoticesPage() {
 					/>
 					<Button
 						variant="outline"
-						style={{ borderColor: "#1a5fd8", color: "#1a5fd8" }}
+						style={{
+							borderColor: "#1a5fd8",
+							color: "#1a5fd8",
+							cursor: "pointer",
+						}}
 					>
 						Filters
 					</Button>
 					<Button
 						variant="outline"
-						style={{ borderColor: "#1a5fd8", color: "#1a5fd8" }}
+						style={{
+							borderColor: "#1a5fd8",
+							color: "#1a5fd8",
+							cursor: "pointer",
+						}}
 					>
 						Export
 					</Button>
@@ -136,6 +144,7 @@ export default function NoticesPage() {
 									backgroundColor: "#ffb400",
 									color: "#1a5fd8",
 									border: "none",
+									cursor: "pointer",
 								}}
 							>
 								Add
@@ -189,7 +198,11 @@ export default function NoticesPage() {
 								<Button
 									variant="outline"
 									onClick={() => setIsDialogOpen(false)}
-									style={{ borderColor: "#1a5fd8", color: "#1a5fd8" }}
+									style={{
+										borderColor: "#1a5fd8",
+										color: "#1a5fd8",
+										cursor: "pointer",
+									}}
 								>
 									Cancel
 								</Button>
@@ -199,6 +212,7 @@ export default function NoticesPage() {
 										backgroundColor: "#ffb400",
 										color: "#1a5fd8",
 										border: "none",
+										cursor: "pointer",
 									}}
 								>
 									Save
@@ -255,6 +269,7 @@ export default function NoticesPage() {
 													backgroundColor: "#1a5fd8",
 													color: "#fff",
 													border: "none",
+													cursor: "pointer",
 												}}
 											>
 												<IconTools size={16} className="mr-1" />
@@ -266,6 +281,7 @@ export default function NoticesPage() {
 													backgroundColor: "#ffb400",
 													color: "#1a5fd8",
 													border: "none",
+													cursor: "pointer",
 												}}
 											>
 												🗑

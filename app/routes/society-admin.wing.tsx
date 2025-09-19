@@ -127,12 +127,17 @@ export default function WingsPage() {
 						onChange={(e) => setSearchTerm(e.target.value)}
 					/>
 				</div>
-				<Button variant="outline" size="sm">
-					<IconFilter className="mr-2 h-4 w-4" />
+				<Button variant="outline" size="sm" style={{ cursor: "pointer" }}>
+					<IconFilter className="mr-2 h-4 w-4" style={{ color: "#1a5fd8" }} />
 					FILTERS
 				</Button>
-				<Button variant="outline" size="sm" onClick={handleExport}>
-					<IconDownload className="mr-2 h-4 w-4" />
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={handleExport}
+					style={{ cursor: "pointer" }}
+				>
+					<IconDownload className="mr-2 h-4 w-4" style={{ color: "#1a5fd8" }} />
 					Export
 				</Button>
 				<Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -143,6 +148,7 @@ export default function WingsPage() {
 								backgroundColor: "#ffb400",
 								color: "#1a5fd8",
 								border: "none",
+								cursor: "pointer",
 							}}
 						>
 							<IconPlus className="mr-2 h-4 w-4" />
@@ -233,6 +239,7 @@ export default function WingsPage() {
 							<Button
 								variant="outline"
 								onClick={() => setIsAddDialogOpen(false)}
+								style={{ cursor: "pointer" }}
 							>
 								Cancel
 							</Button>
@@ -242,6 +249,7 @@ export default function WingsPage() {
 									backgroundColor: "#ffb400",
 									color: "#1a5fd8",
 									border: "none",
+									cursor: "pointer",
 								}}
 							>
 								Save
@@ -274,13 +282,14 @@ export default function WingsPage() {
 							backgroundColor: "#ffb400",
 							color: "#1a5fd8",
 							border: "none",
+							cursor: "pointer",
 						}}
 					>
 						<IconX className="mr-2 h-4 w-4" />
 						CLEAR
 					</Button>
 				)}
-				<Button variant="outline" size="sm">
+				<Button variant="outline" size="sm" style={{ cursor: "pointer" }}>
 					HIDE
 				</Button>
 			</div>
@@ -363,6 +372,7 @@ export default function WingsPage() {
 														backgroundColor: "#1a5fd8",
 														color: "#fff",
 														border: "none",
+														cursor: "pointer",
 													}}
 												>
 													<IconEdit className="mr-2 h-4 w-4" />
@@ -375,6 +385,7 @@ export default function WingsPage() {
 														backgroundColor: "#ffb400",
 														color: "#1a5fd8",
 														border: "none",
+														cursor: "pointer",
 													}}
 												>
 													<IconTrash className="h-4 w-4" />
@@ -395,17 +406,26 @@ export default function WingsPage() {
 					Showing 1 to 3 of 3 results
 				</p>
 				<div className="flex items-center gap-2">
-					<Button variant="outline" size="sm" disabled>
+					<Button
+						variant="outline"
+						size="sm"
+						disabled
+						style={{ cursor: "not-allowed" }}
+					>
 						&lt;
 					</Button>
 					<Button
 						variant="default"
 						size="sm"
-						style={{ backgroundColor: "#1a5fd8", color: "#fff" }}
+						style={{
+							backgroundColor: "#1a5fd8",
+							color: "#fff",
+							cursor: "pointer",
+						}}
 					>
 						1
 					</Button>
-					<Button variant="outline" size="sm">
+					<Button variant="outline" size="sm" style={{ cursor: "pointer" }}>
 						&gt;
 					</Button>
 				</div>

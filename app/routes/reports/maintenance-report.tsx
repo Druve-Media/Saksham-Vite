@@ -24,7 +24,7 @@ const maintenanceData = {
 	pendingRequests: 42,
 	inProgressRequests: 16,
 	averageResolutionTime: "3.2 days",
-	maintenanceCost: "$23,450",
+	maintenanceCost: "₹23,450",
 	recentRequests: [
 		{
 			id: "MT-001",
@@ -35,7 +35,7 @@ const maintenanceData = {
 			priority: "Medium",
 			dateReported: "2024-01-15",
 			dateCompleted: "2024-01-17",
-			cost: "$85",
+			cost: "₹85",
 			technician: "John Smith",
 		},
 		{
@@ -47,7 +47,7 @@ const maintenanceData = {
 			priority: "High",
 			dateReported: "2024-01-16",
 			dateCompleted: "--",
-			cost: "$120",
+			cost: "₹120",
 			technician: "Mike Johnson",
 		},
 		{
@@ -59,7 +59,7 @@ const maintenanceData = {
 			priority: "High",
 			dateReported: "2024-01-17",
 			dateCompleted: "--",
-			cost: "$200",
+			cost: "₹200",
 			technician: "--",
 		},
 		{
@@ -71,7 +71,7 @@ const maintenanceData = {
 			priority: "Low",
 			dateReported: "2024-01-14",
 			dateCompleted: "2024-01-16",
-			cost: "$65",
+			cost: "₹65",
 			technician: "Sarah Wilson",
 		},
 		{
@@ -83,7 +83,7 @@ const maintenanceData = {
 			priority: "Medium",
 			dateReported: "2024-01-16",
 			dateCompleted: "--",
-			cost: "$95",
+			cost: "₹95",
 			technician: "John Smith",
 		},
 	],

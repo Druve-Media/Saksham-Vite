@@ -47,7 +47,7 @@ const apartments = [
 		floor: "1st Floor",
 		type: "2 BHK",
 		area: "1,200 sq ft",
-		rent: "$1,200",
+		rent: "₹1,200",
 		status: "Occupied",
 		owner: "John Smith",
 		tenant: "Alice Johnson",
@@ -59,7 +59,7 @@ const apartments = [
 		floor: "1st Floor",
 		type: "3 BHK",
 		area: "1,500 sq ft",
-		rent: "$1,500",
+		rent: "₹1,500",
 		status: "Occupied",
 		owner: "Jane Doe",
 		tenant: "Bob Wilson",
@@ -71,7 +71,7 @@ const apartments = [
 		floor: "2nd Floor",
 		type: "2 BHK",
 		area: "1,200 sq ft",
-		rent: "$1,200",
+		rent: "₹1,200",
 		status: "Vacant",
 		owner: "Mike Johnson",
 		tenant: "--",
@@ -83,7 +83,7 @@ const apartments = [
 		floor: "3rd Floor",
 		type: "3 BHK",
 		area: "1,600 sq ft",
-		rent: "$1,600",
+		rent: "₹1,600",
 		status: "Occupied",
 		owner: "Sarah Brown",
 		tenant: "David Lee",
@@ -95,7 +95,7 @@ const apartments = [
 		floor: "4th Floor",
 		type: "1 BHK",
 		area: "800 sq ft",
-		rent: "$900",
+		rent: "₹900",
 		status: "Vacant",
 		owner: "Emma Davis",
 		tenant: "--",
@@ -168,17 +168,26 @@ export default function ApartmentsPage() {
 						onChange={(e) => setSearchTerm(e.target.value)}
 					/>
 				</div>
-				<Button variant="outline" size="sm">
-					<IconFilter className="mr-2 h-4 w-4" />
+				<Button variant="outline" size="sm" style={{ cursor: "pointer" }}>
+					<IconFilter className="mr-2 h-4 w-4" style={{ color: "#1a5fd8" }} />
 					FILTERS
 				</Button>
-				<Button variant="outline" size="sm" onClick={handleExport}>
-					<IconDownload className="mr-2 h-4 w-4" />
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={handleExport}
+					style={{ cursor: "pointer" }}
+				>
+					<IconDownload className="mr-2 h-4 w-4" style={{ color: "#1a5fd8" }} />
 					Export
 				</Button>
 				<Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
 					<DialogTrigger asChild>
-						<Button size="sm" className="bg-[#ffb400] hover:bg-[#ffb400]/80">
+						<Button
+							size="sm"
+							className="bg-[#ffb400] hover:bg-[#ffb400]/80"
+							style={{ cursor: "pointer" }}
+						>
 							<IconPlus className="mr-2 h-4 w-4" />
 							Add
 						</Button>
@@ -308,12 +317,14 @@ export default function ApartmentsPage() {
 							<Button
 								variant="outline"
 								onClick={() => setIsAddDialogOpen(false)}
+								style={{ cursor: "pointer" }}
 							>
 								Cancel
 							</Button>
 							<Button
 								onClick={handleAddApartment}
 								className="bg-[#1a5fd8] hover:bg-[#1a5fd8]/80"
+								style={{ cursor: "pointer" }}
 							>
 								Save
 							</Button>
@@ -367,12 +378,13 @@ export default function ApartmentsPage() {
 							setTypeFilter("all");
 						}}
 						className="bg-[#ffb400] text-white hover:bg-[#ffb400]/80"
+						style={{ cursor: "pointer" }}
 					>
 						<IconX className="mr-2 h-4 w-4" />
 						CLEAR
 					</Button>
 				)}
-				<Button variant="outline" size="sm">
+				<Button variant="outline" size="sm" style={{ cursor: "pointer" }}>
 					HIDE
 				</Button>
 			</div>
@@ -444,14 +456,28 @@ export default function ApartmentsPage() {
 										</TableCell>
 										<TableCell>
 											<div className="flex gap-2">
-												<Button variant="outline" size="sm">
+												<Button
+													variant="outline"
+													size="sm"
+													style={{
+														backgroundColor: "#ffb400",
+														color: "#1a5fd8",
+														borderColor: "#ffb400",
+														cursor: "pointer",
+													}}
+												>
 													<IconEdit className="mr-2 h-4 w-4" />
 													UPDATE
 												</Button>
 												<Button
 													variant="outline"
 													size="sm"
-													className="text-[#ffb400] border-[#ffb400] hover:bg-[#ffb400]/10"
+													style={{
+														backgroundColor: "#1a5fd8",
+														color: "white",
+														borderColor: "#1a5fd8",
+														cursor: "pointer",
+													}}
 												>
 													<IconTrash className="h-4 w-4" />
 												</Button>
@@ -471,13 +497,26 @@ export default function ApartmentsPage() {
 					Showing 1 to 5 of 5 results
 				</p>
 				<div className="flex items-center gap-2">
-					<Button variant="outline" size="sm" disabled>
+					<Button
+						variant="outline"
+						size="sm"
+						disabled
+						style={{ cursor: "not-allowed" }}
+					>
 						&lt;
 					</Button>
-					<Button variant="default" size="sm" className="bg-[#1a5fd8]">
+					<Button
+						variant="default"
+						size="sm"
+						style={{
+							backgroundColor: "#1a5fd8",
+							color: "white",
+							cursor: "pointer",
+						}}
+					>
 						1
 					</Button>
-					<Button variant="outline" size="sm">
+					<Button variant="outline" size="sm" style={{ cursor: "pointer" }}>
 						&gt;
 					</Button>
 				</div>

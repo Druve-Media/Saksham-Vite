@@ -131,8 +131,15 @@ export default function UsersPage() {
 							<SelectItem value="manager">Manager</SelectItem>
 						</SelectContent>
 					</Select>
-					<Button onClick={handleExport} variant="outline">
-						<IconDownload className="h-4 w-4 mr-2" />
+					<Button
+						onClick={handleExport}
+						variant="outline"
+						style={{ cursor: "pointer" }}
+					>
+						<IconDownload
+							className="h-4 w-4 mr-2"
+							style={{ color: "#1a5fd8" }}
+						/>
 						Export
 					</Button>
 					<Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -142,6 +149,7 @@ export default function UsersPage() {
 									backgroundColor: "#ffb400",
 									color: "#1a5fd8",
 									border: "none",
+									cursor: "pointer",
 								}}
 							>
 								<IconPlus className="h-4 w-4 mr-2" />
@@ -247,6 +255,7 @@ export default function UsersPage() {
 									type="button"
 									variant="outline"
 									onClick={() => setIsAddDialogOpen(false)}
+									style={{ cursor: "pointer" }}
 								>
 									<IconX className="h-4 w-4 mr-2" />
 									Cancel
@@ -258,6 +267,7 @@ export default function UsersPage() {
 										backgroundColor: "#ffb400",
 										color: "#1a5fd8",
 										border: "none",
+										cursor: "pointer",
 									}}
 								>
 									<IconPlus className="h-4 w-4 mr-2" />
@@ -326,6 +336,7 @@ export default function UsersPage() {
 													backgroundColor: "#1a5fd8",
 													color: "#fff",
 													border: "none",
+													cursor: "pointer",
 												}}
 											>
 												<IconEdit className="mr-2 h-4 w-4" />

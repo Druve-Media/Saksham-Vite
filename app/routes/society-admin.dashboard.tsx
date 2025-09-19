@@ -24,17 +24,17 @@ export default function Page() {
 			{/* Top stats */}
 			<div className="grid grid-cols-2 md:grid-cols-6 gap-4">
 				<Card className="p-4 flex flex-col items-center justify-center h-full">
-					<div className="p-2 rounded-full bg-muted/10 mb-2">
-						<IconBuilding size={20} className="text-primary" />
+					<div className="p-2 rounded-full bg-[#1a5fd8]/10 mb-2">
+						<IconBuilding size={20} style={{ color: "#1a5fd8" }} />
 					</div>
 					<CardTitle className="text-2xl font-bold">5</CardTitle>
 					<CardDescription className="text-sm text-muted-foreground">
-						Wing
+						Wings
 					</CardDescription>
 				</Card>
 				<Card className="p-4 flex flex-col items-center justify-center h-full">
-					<div className="p-2 rounded-full bg-muted/10 mb-2">
-						<IconHome size={20} className="text-primary" />
+					<div className="p-2 rounded-full bg-[#ffb400]/10 mb-2">
+						<IconHome size={20} style={{ color: "#ffb400" }} />
 					</div>
 					<CardTitle className="text-2xl font-bold">0</CardTitle>
 					<CardDescription className="text-sm text-muted-foreground">
@@ -42,8 +42,8 @@ export default function Page() {
 					</CardDescription>
 				</Card>
 				<Card className="p-4 flex flex-col items-center justify-center h-full">
-					<div className="p-2 rounded-full bg-muted/10 mb-2">
-						<IconHome size={20} className="text-primary" />
+					<div className="p-2 rounded-full bg-[#1a5fd8]/10 mb-2">
+						<IconHome size={20} style={{ color: "#1a5fd8" }} />
 					</div>
 					<CardTitle className="text-2xl font-bold">4</CardTitle>
 					<CardDescription className="text-sm text-muted-foreground">
@@ -51,8 +51,8 @@ export default function Page() {
 					</CardDescription>
 				</Card>
 				<Card className="p-4 flex flex-col items-center justify-center h-full">
-					<div className="p-2 rounded-full bg-muted/10 mb-2">
-						<IconAlertCircle size={20} className="text-primary" />
+					<div className="p-2 rounded-full bg-[#ffb400]/10 mb-2">
+						<IconAlertCircle size={20} style={{ color: "#ffb400" }} />
 					</div>
 					<CardTitle className="text-2xl font-bold">20</CardTitle>
 					<CardDescription className="text-sm text-muted-foreground">
@@ -60,21 +60,21 @@ export default function Page() {
 					</CardDescription>
 				</Card>
 				<Card className="p-4 flex flex-col items-center justify-center h-full">
-					<div className="p-2 rounded-full bg-muted/10 mb-2">
-						<IconUser size={20} className="text-primary" />
+					<div className="p-2 rounded-full bg-[#1a5fd8]/10 mb-2">
+						<IconUser size={20} style={{ color: "#1a5fd8" }} />
 					</div>
 					<CardTitle className="text-2xl font-bold">8</CardTitle>
 					<CardDescription className="text-sm text-muted-foreground">
-						Owner
+						Owners
 					</CardDescription>
 				</Card>
 				<Card className="p-4 flex flex-col items-center justify-center h-full">
-					<div className="p-2 rounded-full bg-muted/10 mb-2">
-						<IconUsers size={20} className="text-primary" />
+					<div className="p-2 rounded-full bg-[#ffb400]/10 mb-2">
+						<IconUsers size={20} style={{ color: "#ffb400" }} />
 					</div>
 					<CardTitle className="text-2xl font-bold">12</CardTitle>
 					<CardDescription className="text-sm text-muted-foreground">
-						Tenant
+						Tenants
 					</CardDescription>
 				</Card>
 			</div>
@@ -396,9 +396,10 @@ export default function Page() {
 									backgroundColor: "#1a5fd8",
 									color: "#fff",
 									border: "1px solid #1a5fd8",
+									cursor: "pointer",
 								}}
 							>
-								View service logs
+								View Service Logs
 							</Button>
 						</CardFooter>
 					</CardContent>
@@ -498,9 +499,10 @@ export default function Page() {
 								backgroundColor: "#1a5fd8",
 								color: "#fff",
 								border: "1px solid #1a5fd8",
+								cursor: "pointer",
 							}}
 						>
-							View all notices
+							View All Notices
 						</Button>
 					</CardFooter>
 				</Card>

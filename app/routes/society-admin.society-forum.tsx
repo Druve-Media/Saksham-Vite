@@ -191,7 +191,7 @@ export default function SocietyForumPage() {
 				</div>
 				<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 					<DialogTrigger asChild>
-						<Button className="bg-red-600 hover:bg-red-700">
+						<Button className="bg-[#ffb400] hover:bg-[#ffb400]/80 cursor-pointer">
 							<IconPlus className="mr-2 h-4 w-4" />
 							Start Discussion
 						</Button>
@@ -248,12 +248,16 @@ export default function SocietyForumPage() {
 							</div>
 						</div>
 						<DialogFooter>
-							<Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+							<Button
+								variant="outline"
+								onClick={() => setIsDialogOpen(false)}
+								className="border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer"
+							>
 								Cancel
 							</Button>
 							<Button
 								onClick={handleAdd}
-								className="bg-red-600 hover:bg-red-700"
+								className="bg-[#1a5fd8] hover:bg-[#1a5fd8]/80 cursor-pointer"
 							>
 								Post
 							</Button>
@@ -298,7 +302,11 @@ export default function SocietyForumPage() {
 						<SelectItem value="resolved">Resolved</SelectItem>
 					</SelectContent>
 				</Select>
-				<Button variant="outline" size="sm">
+				<Button
+					variant="outline"
+					size="sm"
+					className="border-[#ffb400] text-[#ffb400] hover:bg-[#ffb400]/10 cursor-pointer"
+				>
 					<IconFilter className="mr-2 h-4 w-4" />
 					FILTERS
 				</Button>
@@ -380,7 +388,11 @@ export default function SocietyForumPage() {
 										Share
 									</Button>
 								</div>
-								<Button variant="outline" size="sm">
+								<Button
+									variant="outline"
+									size="sm"
+									className="border-[#1a5fd8] text-[#1a5fd8] hover:bg-[#1a5fd8]/10 cursor-pointer"
+								>
 									View Discussion
 								</Button>
 							</div>
@@ -396,13 +408,26 @@ export default function SocietyForumPage() {
 					discussions
 				</p>
 				<div className="flex items-center gap-2">
-					<Button variant="outline" size="sm" disabled>
+					<Button
+						variant="outline"
+						size="sm"
+						disabled
+						className="cursor-not-allowed"
+					>
 						&lt;
 					</Button>
-					<Button variant="default" size="sm" className="bg-blue-600">
+					<Button
+						variant="default"
+						size="sm"
+						className="bg-[#1a5fd8] hover:bg-[#1a5fd8]/80 cursor-pointer"
+					>
 						1
 					</Button>
-					<Button variant="outline" size="sm">
+					<Button
+						variant="outline"
+						size="sm"
+						className="border-[#ffb400] text-[#ffb400] hover:bg-[#ffb400]/10 cursor-pointer"
+					>
 						&gt;
 					</Button>
 				</div>

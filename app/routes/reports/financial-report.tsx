@@ -11,22 +11,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const financialData = {
-	totalRevenue: "$125,430",
-	totalExpenses: "$78,920",
-	netIncome: "$46,510",
+	totalRevenue: "₹125,430",
+	totalExpenses: "₹78,920",
+	netIncome: "₹46,510",
 	monthlyTrend: "+12.5%",
 	revenueByCategory: [
-		{ category: "Rent Collection", amount: "$89,200", percentage: "71%" },
-		{ category: "Maintenance Fees", amount: "$24,500", percentage: "19%" },
-		{ category: "Parking Fees", amount: "$8,730", percentage: "7%" },
-		{ category: "Amenity Bookings", amount: "$3,000", percentage: "3%" },
+		{ category: "Rent Collection", amount: "₹89,200", percentage: "71%" },
+		{ category: "Maintenance Fees", amount: "₹24,500", percentage: "19%" },
+		{ category: "Parking Fees", amount: "₹8,730", percentage: "7%" },
+		{ category: "Amenity Bookings", amount: "₹3,000", percentage: "3%" },
 	],
 	expensesByCategory: [
-		{ category: "Maintenance & Repairs", amount: "$32,100", percentage: "41%" },
-		{ category: "Utilities", amount: "$18,900", percentage: "24%" },
-		{ category: "Security Services", amount: "$15,200", percentage: "19%" },
-		{ category: "Cleaning Services", amount: "$8,720", percentage: "11%" },
-		{ category: "Administrative", amount: "$4,000", percentage: "5%" },
+		{ category: "Maintenance & Repairs", amount: "₹32,100", percentage: "41%" },
+		{ category: "Utilities", amount: "₹18,900", percentage: "24%" },
+		{ category: "Security Services", amount: "₹15,200", percentage: "19%" },
+		{ category: "Cleaning Services", amount: "₹8,720", percentage: "11%" },
+		{ category: "Administrative", amount: "₹4,000", percentage: "5%" },
 	],
 };
 
