@@ -1,17 +1,13 @@
-import {
-	IconAlertCircle,
-	IconBuilding,
-	IconHome,
-	IconPlug,
-	IconUser,
-	IconUsers,
-} from "@tabler/icons-react";
+"use client";
+import { IconPlug, IconUsers } from "@tabler/icons-react";
+import RentPaymentsDue from "@/components/dashboard/RentPaymentsDue";
+import SocietyStats from "@/components/dashboard/SocietyStats";
+import TodayBookings from "@/components/dashboard/TodayBookings";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
-	CardDescription,
 	CardFooter,
 	CardHeader,
 	CardTitle,
@@ -21,151 +17,13 @@ import { Separator } from "@/components/ui/separator";
 export default function Page() {
 	return (
 		<>
-			{/* Top stats */}
-			<div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-				<Card className="p-4 flex flex-col items-center justify-center h-full">
-					<div className="p-2 rounded-full bg-[#1a5fd8]/10 mb-2">
-						<IconBuilding size={20} style={{ color: "#1a5fd8" }} />
-					</div>
-					<CardTitle className="text-2xl font-bold">5</CardTitle>
-					<CardDescription className="text-sm text-muted-foreground">
-						Wings
-					</CardDescription>
-				</Card>
-				<Card className="p-4 flex flex-col items-center justify-center h-full">
-					<div className="p-2 rounded-full bg-[#ffb400]/10 mb-2">
-						<IconHome size={20} style={{ color: "#ffb400" }} />
-					</div>
-					<CardTitle className="text-2xl font-bold">0</CardTitle>
-					<CardDescription className="text-sm text-muted-foreground">
-						Unsold Apartments
-					</CardDescription>
-				</Card>
-				<Card className="p-4 flex flex-col items-center justify-center h-full">
-					<div className="p-2 rounded-full bg-[#1a5fd8]/10 mb-2">
-						<IconHome size={20} style={{ color: "#1a5fd8" }} />
-					</div>
-					<CardTitle className="text-2xl font-bold">4</CardTitle>
-					<CardDescription className="text-sm text-muted-foreground">
-						Apartments
-					</CardDescription>
-				</Card>
-				<Card className="p-4 flex flex-col items-center justify-center h-full">
-					<div className="p-2 rounded-full bg-[#ffb400]/10 mb-2">
-						<IconAlertCircle size={20} style={{ color: "#ffb400" }} />
-					</div>
-					<CardTitle className="text-2xl font-bold">20</CardTitle>
-					<CardDescription className="text-sm text-muted-foreground">
-						Maintenance Dues
-					</CardDescription>
-				</Card>
-				<Card className="p-4 flex flex-col items-center justify-center h-full">
-					<div className="p-2 rounded-full bg-[#1a5fd8]/10 mb-2">
-						<IconUser size={20} style={{ color: "#1a5fd8" }} />
-					</div>
-					<CardTitle className="text-2xl font-bold">8</CardTitle>
-					<CardDescription className="text-sm text-muted-foreground">
-						Owners
-					</CardDescription>
-				</Card>
-				<Card className="p-4 flex flex-col items-center justify-center h-full">
-					<div className="p-2 rounded-full bg-[#ffb400]/10 mb-2">
-						<IconUsers size={20} style={{ color: "#ffb400" }} />
-					</div>
-					<CardTitle className="text-2xl font-bold">12</CardTitle>
-					<CardDescription className="text-sm text-muted-foreground">
-						Tenants
-					</CardDescription>
-				</Card>
-			</div>
-
+			<SocietyStats />
 			{/* Main grid */}
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 				{/* Today's Bookings */}
-				<Card className="col-span-1">
-					<CardHeader className="flex flex-row items-center justify-between pb-2">
-						<CardTitle>Today's Bookings</CardTitle>
-						<Badge
-							variant="secondary"
-							className="bg-[#1a5fd8]/20 text-[#1a5fd8]"
-						>
-							Sunday, 07 Sep 2025
-						</Badge>
-					</CardHeader>
-					<CardContent className="space-y-2">
-						<div className="flex items-center gap-2 hover:bg-muted/5 p-2 rounded">
-							<Badge
-								variant="secondary"
-								className="bg-[#1a5fd8]/20 text-[#1a5fd8]"
-							>
-								Swimming Pool
-							</Badge>
-							<span className="text-muted-foreground text-xs">10:00 AM</span>
-							<span className="text-xs">40 min</span>
-							<span className="ml-auto text-xs font-medium">John Doe</span>
-						</div>
-						<Separator />
-						<div className="flex items-center gap-2 hover:bg-muted/5 p-2 rounded">
-							<Badge
-								variant="secondary"
-								className="bg-[#ffb400]/20 text-[#ffb400]"
-							>
-								Gym
-							</Badge>
-							<span className="text-muted-foreground text-xs">08:00 AM</span>
-							<span className="text-xs">20 min</span>
-							<span className="ml-auto text-xs font-medium">Owner</span>
-						</div>
-						<Separator />
-						<div className="flex items-center gap-2 hover:bg-muted/5 p-2 rounded">
-							<Badge
-								variant="secondary"
-								className="bg-[#1a5fd8]/30 text-[#1a5fd8]"
-							>
-								Tennis Court
-							</Badge>
-							<span className="text-muted-foreground text-xs">11:40 AM</span>
-							<span className="text-xs">15 min</span>
-							<span className="ml-auto text-xs font-medium">-</span>
-						</div>
-					</CardContent>
-				</Card>
-
+				<TodayBookings />
 				{/* Rent Payments Due */}
-				<Card className="col-span-1">
-					<CardHeader className="flex flex-row items-center justify-between pb-2">
-						<CardTitle>Rent Payments Due</CardTitle>
-						<Badge
-							variant="secondary"
-							className="bg-[#ffb400]/30 text-[#ffb400]"
-						>
-							1 Pending
-						</Badge>
-					</CardHeader>
-					<CardContent>
-						<div className="flex items-center gap-2 hover:bg-muted/5 p-2 rounded">
-							<div className="flex flex-col">
-								<span className="text-sm font-medium">103</span>
-								<span className="text-xs text-muted-foreground">
-									Tenant • December 2023
-								</span>
-							</div>
-							<span
-								className="ml-auto font-semibold"
-								style={{ color: "#ffb400" }}
-							>
-								$4,281.79
-							</span>
-							<Badge
-								variant="secondary"
-								className="bg-[#ffb400]/30 text-[#ffb400]"
-							>
-								Unpaid
-							</Badge>
-						</div>
-					</CardContent>
-				</Card>
-
+				<RentPaymentsDue />
 				{/* Open and Pending Tickets */}
 				<Card className="col-span-1">
 					<CardHeader className="flex flex-row items-center justify-between pb-2">

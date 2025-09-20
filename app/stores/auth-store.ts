@@ -1,21 +1,36 @@
+// store/authStore.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { User } from "@/beans/user";
+
+export interface AuthUser {
+	token: string;
+	sub: string;
+	society_id: string;
+	role: string;
+}
 
 interface AuthState {
 	isAuthenticated: boolean;
-	user: User | null;
-	login: (user: User) => void;
+	user: AuthUser | null;
+	login: (user: AuthUser) => void;
 	logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
 	persist(
-		(set) => ({
+		(set, get) => ({
 			isAuthenticated: false,
 			user: null,
-			login: (user) => set({ isAuthenticated: true, user }),
-			logout: () => set({ isAuthenticated: false, user: null }),
+			login: (user) => {
+				console.log("🟢 Saving user to store:", user);
+				set({ isAuthenticated: true, user });
+				console.log("📦 Current store state after login:", get());
+			},
+			logout: () => {
+				console.log("🔴 Clearing user from store");
+				set({ isAuthenticated: false, user: null });
+				console.log("📦 Current store state after logout:", get());
+			},
 		}),
 		{
 			name: "auth-storage",
