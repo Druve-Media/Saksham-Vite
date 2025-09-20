@@ -34,28 +34,40 @@ export default function FinancialReportPage() {
 	return (
 		<div className="space-y-6">
 			{/* Header */}
-			<div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-				<div>
-					<h1 className="text-3xl font-bold">Financial Report</h1>
-					<p className="text-muted-foreground">
-						Comprehensive financial analysis and revenue/expense breakdown
-					</p>
-				</div>
-				<div className="flex items-center gap-2">
-					<Button variant="outline" size="sm">
-						<Calendar className="h-4 w-4 mr-2" />
-						Select Period
-					</Button>
-					<Button size="sm">
-						<Download className="h-4 w-4 mr-2" />
-						Export Report
-					</Button>
-				</div>
+			<div className="flex flex-col gap-2 pt-2 pb-4">
+				<h1 className="text-3xl font-bold">Financial Report</h1>
+				<p className="text-muted-foreground">
+					Comprehensive financial analysis and revenue/expense breakdown
+				</p>
+			</div>
+
+			{/* Actions Bar */}
+			<div className="flex items-center gap-2">
+				<Button
+					variant="outline"
+					size="sm"
+					style={{ border: "none", color: "#1a5fd8", cursor: "pointer" }}
+				>
+					<Calendar className="h-4 w-4 mr-2" />
+					Select Period
+				</Button>
+				<Button
+					size="sm"
+					style={{
+						backgroundColor: "#ffb400",
+						color: "#1a5fd8",
+						border: "none",
+						cursor: "pointer",
+					}}
+				>
+					<Download className="h-4 w-4 mr-2" />
+					Export Report
+				</Button>
 			</div>
 
 			{/* Financial Overview Cards */}
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-				<Card>
+				<Card className="bg-background border rounded-lg shadow p-4">
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 						<CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
 						<DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -71,7 +83,7 @@ export default function FinancialReportPage() {
 					</CardContent>
 				</Card>
 
-				<Card>
+				<Card className="bg-background border rounded-lg shadow p-4">
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 						<CardTitle className="text-sm font-medium">
 							Total Expenses
@@ -88,7 +100,7 @@ export default function FinancialReportPage() {
 					</CardContent>
 				</Card>
 
-				<Card>
+				<Card className="bg-background border rounded-lg shadow p-4">
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 						<CardTitle className="text-sm font-medium">Net Income</CardTitle>
 						<TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -103,7 +115,7 @@ export default function FinancialReportPage() {
 					</CardContent>
 				</Card>
 
-				<Card>
+				<Card className="bg-background border rounded-lg shadow p-4">
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 						<CardTitle className="text-sm font-medium">Growth Rate</CardTitle>
 						<PieChart className="h-4 w-4 text-muted-foreground" />
@@ -122,7 +134,7 @@ export default function FinancialReportPage() {
 			{/* Revenue and Expense Breakdown */}
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 				{/* Revenue Breakdown */}
-				<Card>
+				<Card className="bg-background border rounded-lg shadow p-4">
 					<CardHeader>
 						<CardTitle>Revenue Breakdown</CardTitle>
 					</CardHeader>
@@ -132,7 +144,11 @@ export default function FinancialReportPage() {
 								<div className="flex items-center justify-between">
 									<span className="text-sm font-medium">{item.category}</span>
 									<div className="flex items-center gap-2">
-										<Badge variant="secondary">{item.percentage}</Badge>
+										<Badge
+											style={{ backgroundColor: "#ffb400", color: "#1a5fd8" }}
+										>
+											{item.percentage}
+										</Badge>
 										<span className="text-sm font-semibold text-green-600">
 											{item.amount}
 										</span>
@@ -150,7 +166,7 @@ export default function FinancialReportPage() {
 				</Card>
 
 				{/* Expense Breakdown */}
-				<Card>
+				<Card className="bg-background border rounded-lg shadow p-4">
 					<CardHeader>
 						<CardTitle>Expense Breakdown</CardTitle>
 					</CardHeader>
@@ -160,7 +176,11 @@ export default function FinancialReportPage() {
 								<div className="flex items-center justify-between">
 									<span className="text-sm font-medium">{item.category}</span>
 									<div className="flex items-center gap-2">
-										<Badge variant="outline">{item.percentage}</Badge>
+										<Badge
+											style={{ backgroundColor: "#1a5fd8", color: "#fff" }}
+										>
+											{item.percentage}
+										</Badge>
 										<span className="text-sm font-semibold text-red-600">
 											{item.amount}
 										</span>
@@ -179,24 +199,39 @@ export default function FinancialReportPage() {
 			</div>
 
 			{/* Additional Financial Insights */}
-			<Card>
+			<Card className="bg-background border rounded-lg shadow p-4">
 				<CardHeader>
 					<CardTitle>Financial Insights</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-						<div className="text-center p-4 bg-green-50 rounded-lg">
-							<div className="text-2xl font-bold text-green-600">94%</div>
+						<div
+							className="text-center p-4"
+							style={{ backgroundColor: "#e6f7ff" }}
+						>
+							<div className="text-2xl font-bold" style={{ color: "#1a5fd8" }}>
+								94%
+							</div>
 							<div className="text-sm text-muted-foreground">
 								Collection Rate
 							</div>
 						</div>
-						<div className="text-center p-4 bg-blue-50 rounded-lg">
-							<div className="text-2xl font-bold text-blue-600">37%</div>
+						<div
+							className="text-center p-4"
+							style={{ backgroundColor: "#e6f7ff" }}
+						>
+							<div className="text-2xl font-bold" style={{ color: "#1a5fd8" }}>
+								37%
+							</div>
 							<div className="text-sm text-muted-foreground">Profit Margin</div>
 						</div>
-						<div className="text-center p-4 bg-orange-50 rounded-lg">
-							<div className="text-2xl font-bold text-orange-600">$2,847</div>
+						<div
+							className="text-center p-4"
+							style={{ backgroundColor: "#fff7e6" }}
+						>
+							<div className="text-2xl font-bold" style={{ color: "#ffb400" }}>
+								$2,847
+							</div>
 							<div className="text-sm text-muted-foreground">
 								Avg Revenue per Unit
 							</div>

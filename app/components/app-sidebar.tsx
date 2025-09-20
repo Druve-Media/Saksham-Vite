@@ -162,11 +162,11 @@ const data = {
 			items: [
 				{
 					title: "Maintenance Report",
-					url: "/society-admin/reports/maintenance-report",
+					url: "/society-admin/maintenance-report",
 				},
 				{
 					title: "Financial Report",
-					url: "/society-admin/reports/financial-report",
+					url: "/society-admin/financial-report",
 				},
 			],
 		},
