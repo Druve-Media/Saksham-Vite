@@ -3,4 +3,5 @@ export interface User {
 	email: string;
 	avatar: string;
 	mobile?: string;
+	role?: string;
 }
