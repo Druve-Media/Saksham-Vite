@@ -55,7 +55,6 @@ export type CommonTableProps<T> = {
 	stickyHeader?: boolean;
 };
 
-// ✅ Ensure row has id
 export function CommonTable<T extends { id?: string | number }>({
 	columns,
 	data,
