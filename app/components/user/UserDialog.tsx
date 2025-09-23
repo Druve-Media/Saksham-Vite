@@ -376,37 +376,6 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 
-export interface UserFormValues {
-	user: {
-		name: string;
-		phone: string;
-		email: string;
-		agent_id: string;
-	};
-	role: {
-		flat_id: string;
-		society_id: string;
-		role: string;
-		tenancy_start: string;
-		tenancy_end: string;
-		is_active: boolean;
-	};
-}
-
-interface Apartment {
-	id: string;
-	name: string;
-}
-
-interface UserDialogProps {
-	open: boolean;
-	mode: "add" | "edit";
-	initialData?: UserFormValues;
-	onClose: () => void;
-	onSubmit: (data: UserFormValues) => void;
-	apartments: Apartment[];
-}
-
 const ROLES = ["Admin", "User", "Watchman", "Super Admin", "Secretary"];
 
 export function UserDialog({
