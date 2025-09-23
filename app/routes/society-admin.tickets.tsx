@@ -210,7 +210,7 @@ export default function TicketsPage() {
 					<DialogTrigger asChild>
 						<Button
 							size="sm"
-							className="bg-[#ffb400] hover:bg-[#ffb400]/80 cursor-pointer"
+							className="bg-[#ffb400] hover:bg-[#ffb400]/90 text-black cursor-pointer"
 						>
 							<IconPlus className="mr-2 h-4 w-4" />
 							Add

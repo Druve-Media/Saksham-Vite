@@ -185,7 +185,7 @@ export default function ApartmentsPage() {
 					<DialogTrigger asChild>
 						<Button
 							size="sm"
-							className="bg-[#ffb400] hover:bg-[#ffb400]/80"
+							className="bg-[#ffb400] hover:bg-[#ffb400]/90 text-black"
 							style={{ cursor: "pointer" }}
 						>
 							<IconPlus className="mr-2 h-4 w-4" />

@@ -143,11 +143,10 @@ export default function WingsPage() {
 				<Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
 					<DialogTrigger asChild>
 						<Button
+							className="bg-[#ffb400] hover:bg-[#ffb400]/90 text-black"
 							size="sm"
 							style={{
-								backgroundColor: "#ffb400",
-								color: "#1a5fd8",
-								border: "none",
+								order: "none",
 								cursor: "pointer",
 							}}
 						>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router";
 import { ModeToggle } from "@/components/mode-toggle";
-import { AppSidebar } from "@/components/society-admin/app-sidebar";
+import { AppSidebar } from "@/components/super-admin/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
 	SidebarInset,
@@ -44,7 +44,7 @@ export default function SocietyAdminLayout() {
 							orientation="vertical"
 							className="mr-2 data-[orientation=vertical]:h-4"
 						/>
-						<span className="font-semibold text-lg">Society Admin</span>
+						<span className="font-semibold text-lg">Super Admin</span>
 					</div>
 					<div className="ml-auto flex items-center gap-2 px-4">
 						<ModeToggle />

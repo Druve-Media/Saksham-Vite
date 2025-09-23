@@ -222,9 +222,9 @@ export default function AmenitiesPage() {
 				</div>
 				<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 					<DialogTrigger asChild>
-						<Button className="bg-[#ffb400] hover:bg-[#ffb400]/80">
+						<Button className="bg-[#ffb400] hover:bg-[#ffb400]/90 text-black">
 							<IconPlus className="mr-2 h-4 w-4" />
-							Add Amenity
+							Add
 						</Button>
 					</DialogTrigger>
 					<DialogContent className="sm:max-w-lg">

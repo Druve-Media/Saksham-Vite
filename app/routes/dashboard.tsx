@@ -1,7 +1,7 @@
 import { ArrowRight, Building2, FileText, Settings, Users } from "lucide-react";
 import { Link, Navigate } from "react-router";
-import { AppSidebar } from "@/components/app-sidebar";
 import { ModeToggle } from "@/components/mode-toggle";
+import { AppSidebar } from "@/components/society-admin/app-sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

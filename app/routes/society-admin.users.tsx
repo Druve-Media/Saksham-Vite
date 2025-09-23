@@ -145,15 +145,14 @@ export default function UsersPage() {
 					<Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
 						<DialogTrigger asChild>
 							<Button
+								className="bg-[#ffb400] hover:bg-[#ffb400]/90 text-black"
 								style={{
-									backgroundColor: "#ffb400",
-									color: "#1a5fd8",
 									border: "none",
 									cursor: "pointer",
 								}}
 							>
 								<IconPlus className="h-4 w-4 mr-2" />
-								Add User
+								Add U
 							</Button>
 						</DialogTrigger>
 						<DialogContent className="sm:max-w-md">

@@ -134,7 +134,7 @@ export default function VisitorsPage() {
 				</Button>
 				<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 					<DialogTrigger asChild>
-						<Button className="bg-yellow-500 text-white hover:bg-yellow-600 font-semibold px-6">
+						<Button className="bg-[#ffb400] hover:bg-[#ffb400]/90 text-black font-semibold px-6">
 							Add
 						</Button>
 					</DialogTrigger>
