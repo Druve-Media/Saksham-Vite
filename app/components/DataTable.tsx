@@ -196,9 +196,14 @@ export function DataTable<T extends { id?: string | number }>({
 		<div className={cn("flex flex-1 flex-col gap-4 p-4 pt-0", className)}>
 			<div className="flex items-center gap-4">
 				{searchable && (
-					<div className="relative flex-1">
-						<IconSearch className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-						<Input placeholder="Search..." className="pl-10" />
+					<div className="w-[80%]">
+						<div className="relative flex-1 w-1/2">
+							<IconSearch className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+							<Input
+								placeholder="Search a user by name,email or phone number "
+								className="pl-10"
+							/>
+						</div>
 					</div>
 				)}
 

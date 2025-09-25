@@ -1,19 +1,26 @@
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useEffect } from "react";
-import type { SocietyResponse } from "@/beans/society/society";
 import { get } from "@/components/configurations/axios-config/Axiosclient";
 import { useToast } from "@/components/ui/use-toast";
-import { useAuthStore } from "@/stores/auth-store";
 
-export function useGetSociety() {
-	const societyId = useAuthStore((s) => s.user?.society_id);
+export interface Amenity {
+	amenity_id: string;
+	amenity_name: string;
+	time_duration: number;
+	max_capacity: number;
+	amenity_status: string;
+	start_time: string;
+	end_time: string;
+	location: string;
+}
+
+export function useGetAmenities() {
 	const { toast } = useToast();
 
-	const query = useQuery<SocietyResponse>({
-		queryKey: ["society", societyId],
-		queryFn: () => get<SocietyResponse>(`/society/`, { society_id: societyId }),
-		enabled: !!societyId,
+	const query = useQuery<Amenity[]>({
+		queryKey: ["amenities"],
+		queryFn: () => get<Amenity[]>("/amenities/get-all-amenities"),
 	});
 
 	useEffect(() => {
@@ -21,7 +28,7 @@ export function useGetSociety() {
 			const err = query.error as AxiosError<{ message?: string }>;
 			const message =
 				err?.response?.data?.message ||
-				"Failed to fetch society details. Please try again.";
+				"Failed to fetch amenities. Please try again.";
 			toast({
 				title: "Error",
 				description: message,

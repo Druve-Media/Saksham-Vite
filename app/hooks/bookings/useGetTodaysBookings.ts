@@ -1,18 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useEffect } from "react";
-import type { SocietyResponse } from "@/beans/society/society";
 import { get } from "@/components/configurations/axios-config/Axiosclient";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuthStore } from "@/stores/auth-store";
+import type { Booking } from "./useGetBookings";
 
-export function useGetSociety() {
+export function useGetTodaysBookings() {
 	const societyId = useAuthStore((s) => s.user?.society_id);
 	const { toast } = useToast();
 
-	const query = useQuery<SocietyResponse>({
-		queryKey: ["society", societyId],
-		queryFn: () => get<SocietyResponse>(`/society/`, { society_id: societyId }),
+	const query = useQuery<Booking[]>({
+		queryKey: ["todays-bookings", societyId],
+		queryFn: () =>
+			get<Booking[]>("/bookings/get-todays-booking", { society_id: societyId }),
 		enabled: !!societyId,
 	});
 
@@ -21,7 +22,7 @@ export function useGetSociety() {
 			const err = query.error as AxiosError<{ message?: string }>;
 			const message =
 				err?.response?.data?.message ||
-				"Failed to fetch society details. Please try again.";
+				"Failed to fetch today's bookings. Please try again.";
 			toast({
 				title: "Error",
 				description: message,
