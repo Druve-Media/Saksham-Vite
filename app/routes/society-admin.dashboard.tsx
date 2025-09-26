@@ -154,7 +154,7 @@ export default function Page() {
 								className="ml-auto font-semibold"
 								style={{ color: "#ffb400" }}
 							>
-								$4,281.79
+								₹4,281.79
 							</span>
 							<Badge
 								variant="secondary"
@@ -236,7 +236,7 @@ export default function Page() {
 							variant="secondary"
 							className="bg-[#ffb400]/30 text-[#ffb400]"
 						>
-							$1,459.50 Total Due
+							₹1,459.50 Total Due
 						</Badge>
 					</CardHeader>
 					<CardContent className="space-y-2">
@@ -247,7 +247,7 @@ export default function Page() {
 									Water Bill • 01 Sep 2025
 								</span>
 							</div>
-							<span className="ml-auto font-semibold">$469.00</span>
+							<span className="ml-auto font-semibold">₹469.00</span>
 							<Badge
 								variant="secondary"
 								className="bg-[#ffb400]/30 text-[#ffb400]"
@@ -263,7 +263,7 @@ export default function Page() {
 									Water Bill • 29 Aug 2025
 								</span>
 							</div>
-							<span className="ml-auto font-semibold">$215.86</span>
+							<span className="ml-auto font-semibold">₹215.86</span>
 							<Badge
 								variant="secondary"
 								className="bg-[#ffb400]/30 text-[#ffb400]"
@@ -279,7 +279,7 @@ export default function Page() {
 									Water Bill • 10 Aug 2025
 								</span>
 							</div>
-							<span className="ml-auto font-semibold">$108.71</span>
+							<span className="ml-auto font-semibold">₹108.71</span>
 							<Badge
 								variant="secondary"
 								className="bg-[#ffb400]/30 text-[#ffb400]"
@@ -295,7 +295,7 @@ export default function Page() {
 									Water Bill • 16 Aug 2025
 								</span>
 							</div>
-							<span className="ml-auto font-semibold">$458.50</span>
+							<span className="ml-auto font-semibold">₹458.50</span>
 							<Badge
 								variant="secondary"
 								className="bg-[#ffb400]/30 text-[#ffb400]"
@@ -314,7 +314,7 @@ export default function Page() {
 							variant="secondary"
 							className="bg-[#ffb400]/30 text-[#ffb400]"
 						>
-							$1,290.00 Total Due
+							₹1,290.00 Total Due
 						</Badge>
 					</CardHeader>
 					<CardContent className="space-y-2">
@@ -326,7 +326,7 @@ export default function Page() {
 								Electricity bill
 							</Badge>
 							<span className="text-xs">05 October 2024</span>
-							<span className="ml-auto font-semibold">$757.00</span>
+							<span className="ml-auto font-semibold">₹757.00</span>
 							<Badge
 								variant="secondary"
 								className="bg-[#ffb400]/30 text-[#ffb400]"
@@ -342,7 +342,7 @@ export default function Page() {
 								Electricity bill
 							</Badge>
 							<span className="text-xs">01 August 2025</span>
-							<span className="ml-auto font-semibold">$480.00</span>
+							<span className="ml-auto font-semibold">₹480.00</span>
 							<Badge
 								variant="secondary"
 								className="bg-[#ffb400]/30 text-[#ffb400]"
@@ -358,7 +358,7 @@ export default function Page() {
 								Electricity bill
 							</Badge>
 							<span className="text-xs">22 February 2025</span>
-							<span className="ml-auto font-semibold">$463.00</span>
+							<span className="ml-auto font-semibold">₹463.00</span>
 							<Badge
 								variant="secondary"
 								className="bg-[#ffb400]/30 text-[#ffb400]"

@@ -1,13 +1,14 @@
 "use client";
 import {
-	IconBuildingStore,
-	IconChecklist,
-	IconDeviceDesktopAnalytics,
-	IconHome,
-	IconPackages,
-	IconReceipt,
-	IconSettings,
+	IconBuildingStore as TablerBuildingStore,
+	IconChecklist as TablerChecklist,
+	IconDeviceDesktopAnalytics as TablerDeviceDesktopAnalytics,
+	IconHome as TablerHome,
+	IconPackages as TablerPackages,
+	IconReceipt as TablerReceipt,
+	IconSettings as TablerSettings,
 } from "@tabler/icons-react";
+import type { LucideIcon } from "lucide-react";
 import { Users } from "lucide-react";
 import type * as React from "react";
 import { useLocation } from "react-router";
@@ -23,10 +24,18 @@ import {
 } from "@/components/ui/sidebar";
 
 // Sidebar data object
+// Adapter: Tabler icons render as components. We coerce them to `LucideIcon`
+// so they can be passed to `NavMain` without changing that component's types.
+const asLucideIcon = (
+	IconComponent: React.ComponentType<Record<string, unknown>>,
+): LucideIcon => {
+	return IconComponent as unknown as LucideIcon;
+};
+
 const data = {
 	user: {
-		name: "Green Valley Apartments",
-		email: "m@example.com",
+		name: "Druve Media",
+		email: "druvemedi@druvemedia.in",
 		avatar: "/saksham.jpg",
 	},
 	teams: [
@@ -40,37 +49,37 @@ const data = {
 		{
 			title: "Dashboard",
 			url: "/super-admin/dashboard",
-			icon: IconHome,
+			icon: asLucideIcon(TablerHome),
 		},
 		{
 			title: "Society",
 			url: "/super-admin/society",
-			icon: IconBuildingStore,
+			icon: asLucideIcon(TablerBuildingStore),
 		},
 		{
 			title: "Packages",
 			url: "/super-admin/packages",
-			icon: IconPackages,
+			icon: asLucideIcon(TablerPackages),
 		},
 		{
 			title: "Billing",
 			url: "/super-admin/billing",
-			icon: IconReceipt,
+			icon: asLucideIcon(TablerReceipt),
 		},
 		{
 			title: "Offline Request",
 			url: "/super-admin/offline-request",
-			icon: IconChecklist,
+			icon: asLucideIcon(TablerChecklist),
 		},
 		{
 			title: "Landing Site",
 			url: "/super-admin/landing-site",
-			icon: IconDeviceDesktopAnalytics,
+			icon: asLucideIcon(TablerDeviceDesktopAnalytics),
 		},
 		{
 			title: "Settings",
 			url: "/super-admin/settings",
-			icon: IconSettings,
+			icon: asLucideIcon(TablerSettings),
 		},
 	],
 	projects: [],
@@ -79,11 +88,14 @@ const data = {
 function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 	const location = useLocation();
 
-	// Set isActive for current path (flat items only)
+	// Set isActive for current path (flat items only) and ensure boolean type
 	const navItems = data.navMain.map((item) => ({
 		...item,
-		isActive:
-			item.url && item.url !== "#" && location.pathname.startsWith(item.url),
+		isActive: !!(
+			item.url &&
+			item.url !== "#" &&
+			location.pathname.startsWith(item.url)
+		),
 	}));
 
 	return (

@@ -294,7 +294,7 @@ export default function AmenitiesPage() {
 									<Label htmlFor="bookingFee">Booking Fee *</Label>
 									<Input
 										id="bookingFee"
-										placeholder="e.g., $20/hour"
+										placeholder="e.g., ₹20/hour"
 										value={form.bookingFee}
 										onChange={(e) =>
 											setForm((f) => ({ ...f, bookingFee: e.target.value }))

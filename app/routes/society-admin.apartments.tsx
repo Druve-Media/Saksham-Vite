@@ -287,7 +287,7 @@ export default function ApartmentsPage() {
 									<Label htmlFor="rent">Expected Rent *</Label>
 									<Input
 										id="rent"
-										placeholder="$1,200"
+										placeholder="₹1,200"
 										value={newApartment.rent}
 										onChange={(e) =>
 											setNewApartment({

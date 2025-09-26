@@ -221,7 +221,7 @@ export default function ParkingsPage() {
 								<Label htmlFor="monthlyFee">Monthly Fee *</Label>
 								<Input
 									id="monthlyFee"
-									placeholder="e.g., $50"
+									placeholder="e.g., ₹50"
 									value={form.monthlyFee}
 									onChange={(e) =>
 										setForm((f) => ({ ...f, monthlyFee: e.target.value }))

@@ -175,7 +175,7 @@ export default function PackageDetailsDialog({
 											)
 										}
 										className="mt-2"
-										placeholder="$0.00"
+										placeholder="₹0.00"
 									/>
 								) : (
 									<div className="mt-2 font-medium">{currentPkg?.monthly}</div>
@@ -194,7 +194,7 @@ export default function PackageDetailsDialog({
 											)
 										}
 										className="mt-2"
-										placeholder="$0.00"
+										placeholder="₹0.00"
 									/>
 								) : (
 									<div className="mt-2 font-medium">{currentPkg?.annual}</div>
@@ -213,7 +213,7 @@ export default function PackageDetailsDialog({
 											)
 										}
 										className="mt-2"
-										placeholder="$0.00"
+										placeholder="₹0.00"
 									/>
 								) : (
 									<div className="mt-2 font-medium">{currentPkg?.lifetime}</div>

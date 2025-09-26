@@ -4,6 +4,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const societyDetails = {
 	"oakwood-community": {
@@ -21,11 +27,26 @@ const societyDetails = {
 			type: "Trial (trial)",
 			expires: "22 Oct, 2025",
 		},
-		admin: {
-			name: "Holden Wisoky",
-			email: "santa.oconnell@example.com",
-			avatar: "/api/placeholder/150/150",
-		},
+		admins: [
+			{
+				name: "Holden Wisoky",
+				email: "holden.wisoky@example.com",
+				avatar: "/api/placeholder/150/150",
+				role: "Chairman",
+			},
+			{
+				name: "Janet Denesik",
+				email: "janet.denesik@example.com",
+				avatar: "/api/placeholder/150/151",
+				role: "Secretary",
+			},
+			{
+				name: "Marcelino Quigley",
+				email: "marcelino.quigley@example.com",
+				avatar: "/api/placeholder/150/152",
+				role: "Treasurer",
+			},
+		],
 		payments: [
 			{
 				id: 6,
@@ -80,7 +101,10 @@ export default function SuperAdminSocietyDetails() {
 							<div className="flex items-center gap-4">
 								<Avatar className="h-16 w-16">
 									<AvatarFallback className="bg-[#1a5fd8] text-white text-xl font-bold">
-										{society.name.charAt(0)}
+										{society.name
+											.split(" ")
+											.map((n) => n[0])
+											.join("")}
 									</AvatarFallback>
 								</Avatar>
 								<div>
@@ -94,66 +118,66 @@ export default function SuperAdminSocietyDetails() {
 											IMPERSONATE
 										</Badge>
 									</div>
-									<p className="text-sm text-muted-foreground">
+									<p className="text-sm text-muted-foreground max-w-lg truncate">
 										{society.address}
 									</p>
 								</div>
 							</div>
 						</CardHeader>
 						<CardContent className="space-y-4">
-							<div className="grid grid-cols-2 gap-4">
-								<div>
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+								<div className="flex flex-col">
 									<span className="text-sm font-medium text-muted-foreground">
 										Id
 									</span>
 									<p className="font-medium">{society.id}</p>
 								</div>
-								<div>
+								<div className="flex flex-col">
 									<span className="text-sm font-medium text-muted-foreground">
 										Status
 									</span>
-									<div className="mt-1">
+									<p className="mt-1">
 										<Badge
 											variant="outline"
-											className="text-green-600 border-green-600"
+											className="text-green-600 border-green-600 inline-block"
 										>
 											{society.status}
 										</Badge>
-									</div>
+									</p>
 								</div>
-								<div>
+								<div className="flex flex-col">
 									<span className="text-sm font-medium text-muted-foreground">
 										Phone Number
 									</span>
 									<p className="font-medium">{society.phone}</p>
 								</div>
-								<div>
+								<div className="flex flex-col">
 									<span className="text-sm font-medium text-muted-foreground">
 										Email Address
 									</span>
-									<p className="font-medium">{society.email}</p>
+									<p className="font-medium truncate">{society.email}</p>
 								</div>
-								<div>
+								<div className="flex flex-col">
 									<span className="text-sm font-medium text-muted-foreground">
 										Time Zone
 									</span>
 									<p className="font-medium">{society.timezone}</p>
 								</div>
-								<div>
+								<div className="flex flex-col">
 									<span className="text-sm font-medium text-muted-foreground">
 										Country
 									</span>
-									<p className="font-medium flex items-center gap-2">
+									<p className="font-medium flex items-center gap-2 truncate">
 										🇺🇸 {society.country}
 									</p>
 								</div>
-								<div>
+								<div className="flex flex-col">
 									<span className="text-sm font-medium text-muted-foreground">
 										Currency
 									</span>
 									<p className="font-medium">{society.currency}</p>
 								</div>
-								<div>
+								<div className="flex flex-col">
 									<span className="text-sm font-medium text-muted-foreground">
 										Date & Time
 									</span>
@@ -193,30 +217,68 @@ export default function SuperAdminSocietyDetails() {
 						</CardContent>
 					</Card>
 
-					{/* First Admin */}
+					{/* Admins List */}
 					<Card>
 						<CardHeader>
-							<CardTitle>First Admin</CardTitle>
+							<CardTitle>Admins ({society.admins.length})</CardTitle>
 						</CardHeader>
-						<CardContent className="text-center space-y-4">
-							<Avatar className="h-20 w-20 mx-auto">
-								<AvatarImage src={society.admin.avatar} />
-								<AvatarFallback className="bg-[#1a5fd8] text-white text-xl">
-									{society.admin.name
-										.split(" ")
-										.map((n) => n[0])
-										.join("")}
-								</AvatarFallback>
-							</Avatar>
-							<div>
-								<h3 className="font-bold text-lg">{society.admin.name}</h3>
-								<p className="text-sm text-muted-foreground">
-									{society.admin.email}
-								</p>
+						<CardContent className="space-y-4">
+							<div className="divide-y">
+								{society.admins.map(
+									(a: {
+										name: string;
+										email: string;
+										avatar: string;
+										role: string;
+									}) => (
+										<div key={a.email} className="py-3">
+											<div className="grid grid-cols-1 sm:grid-cols-12 items-center gap-4">
+												<div className="sm:col-span-9 flex items-center gap-4">
+													<Avatar className="h-12 w-12">
+														<AvatarImage src={a.avatar} />
+														<AvatarFallback className="bg-[#1a5fd8] text-white text-sm font-bold">
+															{a.name
+																.split(" ")
+																.map((n) => n[0])
+																.join("")}
+														</AvatarFallback>
+													</Avatar>
+													<div className="text-left min-w-0">
+														<div className="flex items-center gap-2">
+															<h4 className="font-semibold truncate">
+																{a.name}
+															</h4>
+															<Badge className="ml-2 rounded-full bg-[#ffb400]/30 text-[#ffb400]">
+																{a.role}
+															</Badge>
+														</div>
+														<p className="text-sm text-muted-foreground truncate">
+															{a.email}
+														</p>
+													</div>
+												</div>
+												<div className="sm:col-span-3 flex justify-end items-center gap-2">
+													<DropdownMenu>
+														<DropdownMenuTrigger asChild>
+															<Button
+																variant="ghost"
+																size="sm"
+																aria-label={`Actions for ${a.name}`}
+															>
+																•••
+															</Button>
+														</DropdownMenuTrigger>
+														<DropdownMenuContent align="end">
+															<DropdownMenuItem>Impersonate</DropdownMenuItem>
+															<DropdownMenuItem>Reset Pw</DropdownMenuItem>
+														</DropdownMenuContent>
+													</DropdownMenu>
+												</div>
+											</div>
+										</div>
+									),
+								)}
 							</div>
-							<Button className="bg-[#e91e63] hover:bg-[#e91e63]/90 text-white">
-								Change Password
-							</Button>
 						</CardContent>
 					</Card>
 				</div>

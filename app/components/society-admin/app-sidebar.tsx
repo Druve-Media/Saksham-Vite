@@ -52,7 +52,7 @@ const data = {
 			icon: Home,
 		},
 		{
-			title: "Society Admin",
+			title: "Dashboard",
 			url: "/society-admin/dashboard",
 			icon: Settings2,
 		},

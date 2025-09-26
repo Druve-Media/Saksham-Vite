@@ -1,4 +1,4 @@
-import { IconPencil, IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconPlus, IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,25 +19,25 @@ const samplePackages: Package[] = [
 	{
 		id: 1,
 		name: "Default",
-		monthly: "$0.00",
-		annual: "$0.00",
-		lifetime: "$0.00",
+		monthly: "₹0.00",
+		annual: "₹0.00",
+		lifetime: "₹0.00",
 		tags: ["Recommended"],
 	},
 	{
 		id: 2,
 		name: "Subscription Package",
-		monthly: "$10.00",
-		annual: "$100.00",
-		lifetime: "$0.00",
+		monthly: "₹10.00",
+		annual: "₹100.00",
+		lifetime: "₹0.00",
 		tags: ["Popular"],
 	},
 	{
 		id: 3,
 		name: "Lifetime Access",
-		monthly: "$0.00",
-		annual: "$0.00",
-		lifetime: "$199.00",
+		monthly: "₹0.00",
+		annual: "₹0.00",
+		lifetime: "₹199.00",
 		tags: ["Lifetime"],
 	},
 ];
@@ -63,7 +63,7 @@ export default function SuperAdminPackages() {
 							onChange={(e) => setQuery(e.target.value)}
 							className="max-w-xs"
 						/>
-						<Button className="bg-[#e91e63] hover:bg-[#e91e63]/90 flex items-center gap-2">
+						<Button className="bg-[#ffb400] hover:bg-[#ffb400]/90 text-black flex items-center gap-2">
 							<IconPlus className="h-4 w-4" /> Add Package
 						</Button>
 					</div>
@@ -117,13 +117,13 @@ export default function SuperAdminPackages() {
 													>
 														View
 													</Button>
-													<Button
+													{/* <Button
 														variant="outline"
 														size="sm"
 														className="flex items-center gap-2"
 													>
 														<IconPencil className="h-4 w-4" /> Update
-													</Button>
+													</Button> */}
 													<Button
 														variant="destructive"
 														size="sm"

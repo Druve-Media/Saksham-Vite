@@ -40,8 +40,10 @@ const subscriptionTrendsData = {
 			label: "Subscriptions",
 			data: [0, 0, 0, 0, 0, 0, 0], // Replace with live data if available
 			borderColor: "#1a5fd8",
-			backgroundColor: (context: any) => {
-				const chart = context.chart;
+			backgroundColor: (
+				context: import("chart.js").ScriptableContext<"line">,
+			) => {
+				const chart = context.chart as import("chart.js").Chart<"line">;
 				const { ctx, chartArea } = chart;
 				if (!chartArea) return "#e0eaff";
 				const gradient = ctx.createLinearGradient(

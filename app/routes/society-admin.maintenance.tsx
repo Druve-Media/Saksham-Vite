@@ -19,11 +19,11 @@ import {
 } from "@/components/ui/table";
 
 const initialRows = [
-	{ year: "2024", month: "November", cost: "$3,200.00", status: "Draft" },
-	{ year: "2024", month: "September", cost: "$7,800.00", status: "Draft" },
-	{ year: "2024", month: "December", cost: "$6,400.00", status: "Draft" },
-	{ year: "2024", month: "April", cost: "$2,400.00", status: "Published" },
-	{ year: "2024", month: "July", cost: "$2,800.00", status: "Published" },
+	{ year: "2024", month: "November", cost: "₹3,200.00", status: "Draft" },
+	{ year: "2024", month: "September", cost: "₹7,800.00", status: "Draft" },
+	{ year: "2024", month: "December", cost: "₹6,400.00", status: "Draft" },
+	{ year: "2024", month: "April", cost: "₹2,400.00", status: "Published" },
+	{ year: "2024", month: "July", cost: "₹2,800.00", status: "Published" },
 ];
 
 export default function MaintenancePage() {
