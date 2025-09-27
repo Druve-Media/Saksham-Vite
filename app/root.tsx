@@ -11,6 +11,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { queryClient } from "@/lib/query-client";
 
@@ -50,6 +51,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				</ThemeProvider>
 				<ScrollRestoration />
 				<Scripts />
+				<Toaster />
 			</body>
 		</html>
 	);

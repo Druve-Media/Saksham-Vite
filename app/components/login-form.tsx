@@ -379,7 +379,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
-import type { LoginResponse } from "@/beans/auth/login";
+import type { LoginResponse, RequestOtpResponse } from "@/beans/auth/login";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -411,11 +411,12 @@ export function LoginForm() {
 	const [reqId, setReqId] = useState<string>("");
 
 	const login = useAuthStore((s) => s.login);
+	const setSocieties = useAuthStore((s) => s.setSocieties);
 	const navigate = useNavigate();
 
 	const requestOtpMutation = useRequestOtp();
 	const loginMutation = useLogin();
-
+	const [societyId, setSocietyId] = useState<string>("");
 	// Mobile form
 	const {
 		register: registerMobile,
@@ -436,8 +437,10 @@ export function LoginForm() {
 		const phoneWithCountry = Number(`91${data.phone}`);
 		console.log(phoneWithCountry, "phoneWithCountry");
 		requestOtpMutation.mutate(phoneWithCountry, {
-			onSuccess: (res) => {
+			onSuccess: (res: RequestOtpResponse) => {
+				setSocietyId(res.data.societies[0]?.society_id || "");
 				setReqId(res.data.reqId);
+				setSocieties(res.data.societies);
 				setStep("otp");
 				console.log(res.data, "datatatatat");
 			},
@@ -447,7 +450,12 @@ export function LoginForm() {
 	// ✅ Verify OTP
 	const handleVerifyOtp = (data: OtpForm) => {
 		loginMutation.mutate(
-			{ phone: Number(requestOtpMutation.variables), reqId, otp: data.otp },
+			{
+				phone: Number(requestOtpMutation.variables),
+				reqId,
+				otp: data.otp,
+				society_id: societyId,
+			},
 			{
 				onSuccess: (res: LoginResponse) => {
 					console.log(res.data.token, "res.data.token");

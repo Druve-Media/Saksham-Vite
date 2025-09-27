@@ -32,8 +32,12 @@ export const useLogin = () => {
 	const { toast } = useToast();
 
 	return useMutation({
-		mutationFn: (payload: { phone: number; reqId: string; otp: string }) =>
-			verifyLogin(payload),
+		mutationFn: (payload: {
+			phone: number;
+			reqId: string;
+			otp: string;
+			society_id: string;
+		}) => verifyLogin(payload),
 		onSuccess: () => {
 			toast({
 				title: "Success",

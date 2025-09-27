@@ -4,24 +4,28 @@ import { useEffect } from "react";
 import { get } from "@/components/configurations/axios-config/Axiosclient";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuthStore } from "@/stores/auth-store";
-import type { Booking } from "./useGetBookings";
 
-interface TodaysBookingsResponse {
-	bookings: Booking[];
-	message?: string;
+export interface Announcement {
+	announcement_id: string;
+	created_by: string;
+	society_id: string;
+	content: string;
+	created_on: string;
+	status: string;
+	role: string[];
 }
 
-export function useGetTodaysBookings() {
-	const societyId = useAuthStore((s) => s.user?.society_id);
-	console.log(societyId, "societyId societyId");
+export function useGetSocietyAnnouncements() {
 	const { toast } = useToast();
 
-	const query = useQuery<TodaysBookingsResponse>({
-		queryKey: ["todays-bookings", societyId],
+	const societyId = useAuthStore((s) => s.user?.society_id);
+
+	const query = useQuery<Announcement[]>({
+		queryKey: ["announcements", societyId],
 		queryFn: () =>
-			get<TodaysBookingsResponse>("/bookings/get-todays-booking", {
-				society_id: societyId,
-			}),
+			get<Announcement[]>(
+				`/announcements/get-society-announcements?society_id=${societyId}`,
+			),
 		enabled: !!societyId,
 	});
 
@@ -30,7 +34,7 @@ export function useGetTodaysBookings() {
 			const err = query.error as AxiosError<{ message?: string }>;
 			const message =
 				err?.response?.data?.message ||
-				"Failed to fetch today's bookings. Please try again.";
+				"Failed to fetch announcements. Please try again.";
 			toast({
 				title: "Error",
 				description: message,
@@ -39,12 +43,5 @@ export function useGetTodaysBookings() {
 		}
 	}, [query.isError, query.error, toast]);
 
-	const data = query.data?.bookings || [];
-	const message = query.data?.message;
-
-	return {
-		...query,
-		data,
-		message,
-	};
+	return query;
 }

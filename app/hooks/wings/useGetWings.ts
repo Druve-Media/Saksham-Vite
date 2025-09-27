@@ -6,10 +6,11 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAuthStore } from "@/stores/auth-store";
 
 export interface Wing {
-	wing_name?: string;
-	society_id?: string;
-	wing_id?: string;
-	total_apartments?: number;
+	wing_id: string;
+	wing_name: string;
+	floors: number;
+	number_of_apartments: number;
+	apartment_count: number;
 }
 
 export interface WingResponse {

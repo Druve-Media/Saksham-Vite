@@ -1,27 +1,43 @@
 import { useQuery } from "@tanstack/react-query";
-import type { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { useEffect } from "react";
 import { get } from "@/components/configurations/axios-config/Axiosclient";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuthStore } from "@/stores/auth-store";
-import type { Booking } from "./useGetBookings";
 
-interface TodaysBookingsResponse {
-	bookings: Booking[];
-	message?: string;
+interface Apartment {
+	flat_id: string;
+	flat_no: string;
+	floor: number;
+	type: string;
+	area_sqft: number;
+	status: string;
+	wing_name: string;
+	society_name: string;
 }
 
-export function useGetTodaysBookings() {
+interface ApartmentsResponse {
+	total: number;
+	page: number;
+	per_page: number;
+	items: Apartment[];
+}
+
+export function useGetAllApartments() {
 	const societyId = useAuthStore((s) => s.user?.society_id);
-	console.log(societyId, "societyId societyId");
 	const { toast } = useToast();
 
-	const query = useQuery<TodaysBookingsResponse>({
-		queryKey: ["todays-bookings", societyId],
+	const query = useQuery<ApartmentsResponse>({
+		queryKey: ["all-apartments", societyId],
 		queryFn: () =>
-			get<TodaysBookingsResponse>("/bookings/get-todays-booking", {
-				society_id: societyId,
-			}),
+			get<ApartmentsResponse>(
+				`/v2/saksham/society/get-all-apartments-in-society`,
+				{
+					society_id: societyId,
+					page: "1",
+					per_page: "1000",
+				},
+			),
 		enabled: !!societyId,
 	});
 
@@ -30,7 +46,7 @@ export function useGetTodaysBookings() {
 			const err = query.error as AxiosError<{ message?: string }>;
 			const message =
 				err?.response?.data?.message ||
-				"Failed to fetch today's bookings. Please try again.";
+				"Failed to fetch apartments. Please try again.";
 			toast({
 				title: "Error",
 				description: message,
@@ -39,12 +55,5 @@ export function useGetTodaysBookings() {
 		}
 	}, [query.isError, query.error, toast]);
 
-	const data = query.data?.bookings || [];
-	const message = query.data?.message;
-
-	return {
-		...query,
-		data,
-		message,
-	};
+	return query;
 }

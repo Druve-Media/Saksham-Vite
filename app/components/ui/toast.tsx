@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { useToast } from "./use-toast";
 
 const ToastProvider = ToastPrimitives.Provider;
 
@@ -32,6 +33,8 @@ const toastVariants = cva(
 				default: "border bg-background text-foreground",
 				destructive:
 					"destructive group border-destructive bg-destructive text-destructive-foreground",
+				success: "group border-green-500 bg-green-50 text-green-900",
+				warning: "group border-yellow-500 bg-yellow-50 text-yellow-900",
 			},
 		},
 		defaultVariants: {
@@ -43,7 +46,7 @@ const toastVariants = cva(
 const Toast = React.forwardRef<
 	React.ElementRef<typeof ToastPrimitives.Root>,
 	React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> & {
-		variant?: "default" | "destructive";
+		variant?: "default" | "destructive" | "success" | "warning";
 	}
 >(({ className, variant = "default", ...props }, ref) => {
 	return (
@@ -78,7 +81,7 @@ const ToastClose = React.forwardRef<
 	<ToastPrimitives.Close
 		ref={ref}
 		className={cn(
-			"absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600",
+			"absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600 group-[.success]:text-green-300 group-[.success]:hover:text-green-50 group-[.success]:focus:ring-green-400 group-[.success]:focus:ring-offset-green-600 group-[.warning]:text-yellow-300 group-[.warning]:hover:text-yellow-50 group-[.warning]:focus:ring-yellow-400 group-[.warning]:focus:ring-offset-yellow-600",
 			className,
 		)}
 		toast-close=""
@@ -117,12 +120,51 @@ interface ToastProps {
 	title?: React.ReactNode;
 	description?: React.ReactNode;
 	action?: React.ReactNode;
-	variant?: "default" | "destructive";
+	variant?: "default" | "destructive" | "success" | "warning";
 }
 
 type ToastActionElement = React.ReactElement<typeof ToastAction>;
 
+const Toaster = ({ ...props }: { className?: string }) => {
+	const { toasts } = useToast();
+
+	return (
+		<ToastProvider {...props}>
+			{toasts.map(function ({
+				id,
+				title,
+				description,
+				action,
+				variant,
+				...props
+			}: {
+				id: string;
+				title?: React.ReactNode;
+				description?: React.ReactNode;
+				action?: ToastActionElement;
+				variant: "default" | "destructive" | "success" | "warning";
+				[key: string]: any;
+			}) {
+				return (
+					<Toast key={id} variant={variant} {...props}>
+						<div className="grid gap-1">
+							{title && <ToastTitle>{title}</ToastTitle>}
+							{description && (
+								<ToastDescription>{description}</ToastDescription>
+							)}
+						</div>
+						{action}
+						<ToastClose />
+					</Toast>
+				);
+			})}
+			<ToastViewport />
+		</ToastProvider>
+	);
+};
+
 export {
+	Toaster,
 	ToastProvider,
 	ToastViewport,
 	Toast,

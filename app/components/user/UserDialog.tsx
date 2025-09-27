@@ -375,6 +375,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { useAuthStore } from "@/stores/auth-store";
 
 const ROLES = ["Admin", "User", "Watchman", "Super Admin", "Secretary"];
 
@@ -403,11 +404,21 @@ export function UserDialog({
 		},
 	});
 
+	const authUser = useAuthStore((state) => state.user);
+
 	useEffect(() => {
 		if (initialData) {
 			setFormData(initialData);
+		} else if (open && mode === "add") {
+			setFormData((prev) => ({
+				...prev,
+				role: {
+					...prev.role,
+					society_id: authUser?.societies?.[0]?.society_id || "",
+				},
+			}));
 		}
-	}, [initialData]);
+	}, [initialData, open, mode, authUser]);
 
 	const handleChange = (
 		section: "user" | "role",

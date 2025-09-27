@@ -3,7 +3,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import type { Booking } from "@/hooks/bookings/useGetBookings";
 import { useGetTodaysBookings } from "@/hooks/bookings/useGetTodaysBookings";
 
 export default function TodayBookings() {
@@ -23,6 +22,7 @@ export default function TodayBookings() {
 		now.setHours(hours, minutes, seconds, 0);
 		return now;
 	}
+	console.log(query.data, "query");
 
 	function formatTime(date: Date): string {
 		return date.toLocaleTimeString("en-US", {
@@ -81,6 +81,13 @@ export default function TodayBookings() {
 						)}
 					</div>
 				))}
+				{query?.data?.length === 0 && (
+					<div className="flex items-center justify-center p-8 text-center">
+						<p className="text-sm text-muted-foreground">
+							{query.message || "No bookings for today."}
+						</p>
+					</div>
+				)}
 			</CardContent>
 		</Card>
 	);

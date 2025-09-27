@@ -9,3 +9,5 @@ export const verifyLogin = (payload: {
 	reqId: string;
 	otp: string;
 }) => postRequest<LoginResponse>("/auth/login", payload);
+
+export const logout = () => postRequest("/auth/logout", {});
