@@ -1,5 +1,6 @@
 "use client";
 
+import type { LucideIcon } from "lucide-react";
 import {
 	Building2,
 	Calendar,
@@ -20,6 +21,7 @@ import {
 } from "lucide-react";
 import type * as React from "react";
 import { useLocation } from "react-router";
+import type { Society } from "@/beans/auth/login";
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
@@ -30,21 +32,24 @@ import {
 	SidebarHeader,
 	SidebarRail,
 } from "@/components/ui/sidebar";
+import { useAuthStore } from "@/stores/auth-store";
+
+interface NavSubItem {
+	title: string;
+	url: string;
+	isActive?: boolean;
+}
+
+interface NavItem {
+	title: string;
+	url: string;
+	icon: LucideIcon;
+	items?: NavSubItem[];
+	isActive?: boolean;
+}
 
 // Sidebar data object
-const data = {
-	user: {
-		name: "Green Valley Apartments",
-		email: "m@example.com",
-		avatar: "/saksham.jpg",
-	},
-	teams: [
-		{
-			name: "Saksham",
-			logo: Users,
-			plan: "Enterprise",
-		},
-	],
+const navData: { navMain: NavItem[]; projects: [] } = {
 	navMain: [
 		{
 			title: "Home",
@@ -181,10 +186,31 @@ const data = {
 
 function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 	const location = useLocation();
+	const societies = useAuthStore((s) => s.societies);
+	const setSelectedSociety = useAuthStore((s) => s.setSelectedSociety);
+
+	const handleTeamSelect = (team: { name: string; plan: string }) => {
+		const selectedSociety = societies?.find((s) => s.name === team.name);
+		if (selectedSociety) {
+			setSelectedSociety(selectedSociety.society_id);
+		}
+	};
+
+	const teams =
+		societies?.map((society: Society) => ({
+			name: society.name,
+			logo: Users,
+			plan: society.role,
+		})) || [];
+	const user = {
+		name: societies?.[0]?.name || "Green Valley Apartments",
+		email: "m@example.com",
+		avatar: "",
+	};
 
 	// Recursively set isActive for current path
-	function markActive(items: typeof data.navMain): typeof data.navMain {
-		return items.map((item) => {
+	function markActive(items: NavItem[]): NavItem[] {
+		return items.map((item: NavItem) => {
 			const isActive =
 				item.url && item.url !== "#" && location.pathname.startsWith(item.url);
 			if (item.items) {
@@ -192,29 +218,32 @@ function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 					...item,
 					isActive:
 						isActive ||
-						item.items.some((sub) => location.pathname.startsWith(sub.url)),
-					items: item.items.map((subItem) => ({
+						item.items.some((sub: NavSubItem) =>
+							location.pathname.startsWith(sub.url),
+						) ||
+						false,
+					items: item.items.map((subItem: NavSubItem) => ({
 						...subItem,
-						isActive: location.pathname.startsWith(subItem.url),
+						isActive: location.pathname.startsWith(subItem.url) || false,
 					})),
 				};
 			}
-			return { ...item, isActive };
+			return { ...item, isActive: isActive || false };
 		});
 	}
 
-	const navItems = markActive(data.navMain);
+	const navItems = markActive(navData.navMain);
 
 	return (
 		<Sidebar collapsible="icon" {...props}>
 			<SidebarHeader>
-				<TeamSwitcher teams={data.teams} />
+				<TeamSwitcher teams={teams} onTeamSelect={handleTeamSelect} />
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain items={navItems} />
 			</SidebarContent>
 			<SidebarFooter>
-				<NavUser user={data.user} />
+				<NavUser user={user} />
 			</SidebarFooter>
 			<SidebarRail />
 		</Sidebar>

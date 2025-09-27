@@ -35,14 +35,8 @@
 // }) {
 // 	const { isMobile } = useSidebar();
 
-import {
-	BadgeCheck,
-	Bell,
-	ChevronsUpDown,
-	CreditCard,
-	LogOut,
-	Sparkles,
-} from "lucide-react";
+import { ChevronsUpDown, LogOut, Sparkles } from "lucide-react";
+import { useMemo } from "react";
 // 	return (
 // 		<SidebarMenu>
 // 			<SidebarMenuItem>
@@ -136,14 +130,26 @@ import { useAuthStore } from "@/stores/auth-store";
 export function NavUser({
 	user,
 }: {
-	user: { name: string; email: string; avatar: string };
+	user: { name?: string; email?: string; avatar?: string };
 }) {
 	const { isMobile } = useSidebar();
 	const logout = useAuthStore((s) => s.logout);
 	const navigate = useNavigate();
 
-	const handleLogout = () => {
-		logout();
+	const getInitials = (name?: string): string => {
+		if (!name || name.trim() === "") return "U";
+		const words = name.trim().split(/\s+/);
+		const initials = words
+			.slice(0, 2)
+			.map((word) => word.charAt(0)?.toUpperCase() || "")
+			.join("");
+		return initials || "U";
+	};
+
+	const initials = useMemo(() => getInitials(user?.name), [user?.name]);
+
+	const handleLogout = async () => {
+		await logout();
 		navigate("/auth/login", { replace: true });
 	};
 
@@ -157,8 +163,17 @@ export function NavUser({
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 						>
 							<Avatar className="h-8 w-8 rounded-lg">
-								<AvatarImage src={user.avatar} alt={user.name} />
-								<AvatarFallback className="rounded-lg">CN</AvatarFallback>
+								{user?.avatar &&
+								typeof user.avatar === "string" &&
+								user.avatar.trim() !== "" ? (
+									<AvatarImage
+										src={user.avatar}
+										alt={`${user.name || "User"} avatar`}
+									/>
+								) : null}
+								<AvatarFallback className="rounded-lg">
+									{initials}
+								</AvatarFallback>
 							</Avatar>
 							<div className="grid flex-1 text-left text-sm leading-tight">
 								<span className="truncate font-medium">{user.name}</span>
@@ -176,8 +191,17 @@ export function NavUser({
 						<DropdownMenuLabel className="p-0 font-normal">
 							<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 								<Avatar className="h-8 w-8 rounded-lg">
-									<AvatarImage src={user.avatar} alt={user.name} />
-									<AvatarFallback className="rounded-lg">CN</AvatarFallback>
+									{user?.avatar &&
+									typeof user.avatar === "string" &&
+									user.avatar.trim() !== "" ? (
+										<AvatarImage
+											src={user.avatar}
+											alt={`${user.name || "User"} avatar`}
+										/>
+									) : null}
+									<AvatarFallback className="rounded-lg">
+										{initials}
+									</AvatarFallback>
 								</Avatar>
 								<div className="grid flex-1 text-left text-sm leading-tight">
 									<span className="truncate font-medium">{user.name}</span>
@@ -190,21 +214,6 @@ export function NavUser({
 							<DropdownMenuItem>
 								<Sparkles />
 								Upgrade to Pro
-							</DropdownMenuItem>
-						</DropdownMenuGroup>
-						<DropdownMenuSeparator />
-						<DropdownMenuGroup>
-							<DropdownMenuItem>
-								<BadgeCheck />
-								Account
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<CreditCard />
-								Billing
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<Bell />
-								Notifications
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
