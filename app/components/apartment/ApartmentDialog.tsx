@@ -1,4 +1,8 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
+import type { Resolver } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -8,6 +12,14 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -41,6 +53,41 @@ interface ApartmentDialogProps {
 	onClose?: () => void;
 }
 
+const formSchema = z.object({
+	wingId: z.string().min(1, "Wing is required"),
+	flat_no: z.string().min(1, "Flat No is required"),
+	floor: z
+		.string()
+		.min(1, "Floor is required")
+		.refine(
+			(val) => !isNaN(Number(val)) && Number(val) >= 0,
+			"Floor must be a valid number >= 0",
+		),
+	type: z
+		.string()
+		.min(1, "Apartment type is required")
+		.refine(
+			(val) => ["2BHK", "3BHK"].includes(val),
+			"Apartment type must be 2BHK or 3BHK",
+		),
+	area_sqft: z
+		.string()
+		.min(1, "Area is required")
+		.refine(
+			(val) => !isNaN(Number(val)) && Number(val) >= 1,
+			"Area must be a valid number >= 1 sq ft",
+		),
+	status: z
+		.string()
+		.min(1, "Status is required")
+		.refine(
+			(val) => ["Occupied", "Unsold"].includes(val),
+			"Status must be Occupied or Unsold",
+		),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
 export function ApartmentDialog({
 	open,
 	onOpenChange,
@@ -50,22 +97,27 @@ export function ApartmentDialog({
 }: ApartmentDialogProps) {
 	const wings = useGetWings(1, 100);
 	const [selectedWing, setSelectedWing] = useState<Wing | null>(null);
-	const [formData, setFormData] = useState({
-		wingId: "",
-		flat_no: "",
-		floor: "",
-		type: "",
-		area_sqft: "",
-		status: "",
-	});
 
 	const { mutateAsync: addApartment } = useAddApartment();
 	const { mutateAsync: updateApartment } = useUpdateApartment();
 
+	const form = useForm<FormValues>({
+		resolver: zodResolver(formSchema) as Resolver<FormValues, any, FormValues>,
+		mode: "onSubmit",
+		defaultValues: {
+			wingId: "",
+			flat_no: "",
+			floor: "",
+			type: "",
+			area_sqft: "",
+			status: "",
+		},
+	});
+
 	useEffect(() => {
 		if (open) {
 			if (mode === "edit" && initialData) {
-				setFormData({
+				form.reset({
 					wingId: "",
 					flat_no: initialData.flat_no,
 					floor: initialData.floor.toString(),
@@ -73,8 +125,9 @@ export function ApartmentDialog({
 					area_sqft: initialData.area_sqft.toString(),
 					status: initialData.status,
 				});
+				setSelectedWing(null);
 			} else {
-				setFormData({
+				form.reset({
 					wingId: "",
 					flat_no: "",
 					floor: "",
@@ -82,26 +135,27 @@ export function ApartmentDialog({
 					area_sqft: "",
 					status: "",
 				});
+				setSelectedWing(null);
 			}
 		}
-	}, [open, mode, initialData]);
+	}, [open, mode, initialData, form]);
 
 	useEffect(() => {
 		if (
 			mode === "edit" &&
 			initialData &&
 			wings.data?.items.length &&
-			formData.wingId === ""
+			form.getValues("wingId") === ""
 		) {
 			const wing = wings.data.items.find(
 				(w) => w.wing_name === initialData.wing_name,
 			);
 			if (wing) {
 				setSelectedWing(wing);
-				setFormData((prev) => ({ ...prev, wingId: wing.wing_id }));
+				form.setValue("wingId", wing.wing_id);
 			}
 		}
-	}, [wings.data, initialData, mode, formData.wingId]);
+	}, [wings.data, initialData, mode, form]);
 
 	const getFloorLabel = (floor: number): string => {
 		if (floor === 0) return "Ground";
@@ -134,18 +188,19 @@ export function ApartmentDialog({
 	const handleWingChange = (value: string) => {
 		const wing = wings.data?.items.find((w) => w.wing_id === value) || null;
 		setSelectedWing(wing);
-		setFormData((prev) => ({ ...prev, wingId: value, floor: "" }));
+		form.setValue("wingId", value);
+		form.setValue("floor", "");
 	};
 
-	const handleSubmit = async () => {
+	const onSubmit = async (values: FormValues) => {
 		try {
 			const payload = {
-				flat_no: formData.flat_no,
-				wing_id: formData.wingId,
-				floor: parseInt(formData.floor, 10),
-				type: formData.type,
-				area_sqft: parseInt(formData.area_sqft, 10),
-				status: formData.status,
+				flat_no: values.flat_no,
+				wing_id: values.wingId,
+				floor: Number(values.floor),
+				type: values.type,
+				area_sqft: Number(values.area_sqft),
+				status: values.status,
 			};
 
 			if (mode === "add") {
@@ -154,6 +209,7 @@ export function ApartmentDialog({
 				await updateApartment({ flat_id: initialData.flat_id, ...payload });
 			}
 
+			form.reset();
 			onOpenChange(false);
 			if (onClose) onClose();
 		} catch (error) {
@@ -162,8 +218,14 @@ export function ApartmentDialog({
 		}
 	};
 
+	const handleClose = () => {
+		form.reset();
+		setSelectedWing(null);
+		onOpenChange(false);
+	};
+
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<Dialog open={open} onOpenChange={handleClose}>
 			<DialogContent className="sm:max-w-[500px]">
 				<DialogHeader>
 					<DialogTitle>
@@ -175,128 +237,154 @@ export function ApartmentDialog({
 							: "Update the apartment details below."}
 					</DialogDescription>
 				</DialogHeader>
-				<div className="grid gap-4 py-4">
-					<div className="grid grid-cols-2 gap-4">
-						<div className="grid gap-2">
-							<Label htmlFor="flat_no">Flat No *</Label>
-							<Input
-								id="flat_no"
-								placeholder="204"
-								value={formData.flat_no}
-								onChange={(e) =>
-									setFormData({
-										...formData,
-										flat_no: e.target.value,
-									})
-								}
-							/>
-						</div>
-						<div className="grid gap-2">
-							<Label htmlFor="wing">Wing *</Label>
-							<Select onValueChange={handleWingChange} value={formData.wingId}>
-								<SelectTrigger>
-									<SelectValue placeholder="Select Wing" />
-								</SelectTrigger>
-								<SelectContent>
-									{wings.data?.items.map((wing) => (
-										<SelectItem key={wing.wing_id} value={wing.wing_id}>
-											{wing.wing_name}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
-					</div>
-					<div className="grid grid-cols-2 gap-4">
-						<div className="grid gap-2">
-							<Label htmlFor="floor">Floor *</Label>
-							<Select
-								onValueChange={(value) =>
-									setFormData({ ...formData, floor: value })
-								}
-								value={formData.floor}
-							>
-								<SelectTrigger>
-									<SelectValue placeholder="Select Floor" />
-								</SelectTrigger>
-								<SelectContent>
-									{selectedWing
-										? Array.from(
-												{ length: selectedWing.floors + 1 },
-												(_, i) => (
-													<SelectItem key={i} value={i.toString()}>
-														{getFloorLabel(i)}
-													</SelectItem>
-												),
-											)
-										: null}
-								</SelectContent>
-							</Select>
-						</div>
-						<div className="grid gap-2">
-							<Label htmlFor="type">Apartment Type *</Label>
-							<Select
-								onValueChange={(value) =>
-									setFormData({ ...formData, type: value })
-								}
-								value={formData.type}
-							>
-								<SelectTrigger>
-									<SelectValue placeholder="Select Type" />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="2BHK">2BHK</SelectItem>
-									<SelectItem value="3BHK">3BHK</SelectItem>
-								</SelectContent>
-							</Select>
-						</div>
-					</div>
-					<div className="grid grid-cols-2 gap-4">
-						<div className="grid gap-2">
-							<Label htmlFor="area_sqft">Area (sq ft) *</Label>
-							<Input
-								id="area_sqft"
-								type="number"
-								placeholder="1000"
-								value={formData.area_sqft}
-								onChange={(e) =>
-									setFormData({
-										...formData,
-										area_sqft: e.target.value,
-									})
-								}
-							/>
-						</div>
-						<div className="grid gap-2">
-							<Label htmlFor="status">Status *</Label>
-							<Select
-								onValueChange={(value) =>
-									setFormData({ ...formData, status: value })
-								}
-								value={formData.status}
-							>
-								<SelectTrigger>
-									<SelectValue placeholder="Select Status" />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="Occupied">Occupied</SelectItem>
-									<SelectItem value="Unsold">Unsold</SelectItem>
-								</SelectContent>
-							</Select>
-						</div>
-					</div>
-				</div>
-				<DialogFooter>
-					<Button variant="outline" onClick={() => onOpenChange(false)}>
-						Cancel
-					</Button>
-					<Button
-						onClick={handleSubmit}
-						className="bg-[#1a5fd8] hover:bg-[#1a5fd8]/80"
+				<Form {...form}>
+					<form
+						onSubmit={form.handleSubmit(onSubmit)}
+						className="space-y-4 py-4"
 					>
-						{mode === "add" ? "Add" : "Update"}
-					</Button>
-				</DialogFooter>
+						<div className="grid grid-cols-2 gap-4">
+							<FormField
+								control={form.control}
+								name="flat_no"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Flat No *</FormLabel>
+										<FormControl>
+											<Input placeholder="204" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="wingId"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Wing *</FormLabel>
+										<Select
+											onValueChange={handleWingChange}
+											value={field.value}
+										>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Select Wing" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{wings.data?.items.map((wing) => (
+													<SelectItem key={wing.wing_id} value={wing.wing_id}>
+														{wing.wing_name}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+						<div className="grid grid-cols-2 gap-4">
+							<FormField
+								control={form.control}
+								name="floor"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Floor *</FormLabel>
+										<Select onValueChange={field.onChange} value={field.value}>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Select Floor" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{selectedWing
+													? Array.from(
+															{ length: selectedWing.floors + 1 },
+															(_, i) => (
+																<SelectItem key={i} value={i.toString()}>
+																	{getFloorLabel(i)}
+																</SelectItem>
+															),
+														)
+													: null}
+											</SelectContent>
+										</Select>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="type"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Apartment Type *</FormLabel>
+										<Select onValueChange={field.onChange} value={field.value}>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Select Type" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												<SelectItem value="2BHK">2BHK</SelectItem>
+												<SelectItem value="3BHK">3BHK</SelectItem>
+											</SelectContent>
+										</Select>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+						<div className="grid grid-cols-2 gap-4">
+							<FormField
+								control={form.control}
+								name="area_sqft"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Area (sq ft) *</FormLabel>
+										<FormControl>
+											<Input type="number" placeholder="1000" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="status"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Status *</FormLabel>
+										<Select onValueChange={field.onChange} value={field.value}>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Select Status" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												<SelectItem value="Occupied">Occupied</SelectItem>
+												<SelectItem value="Unsold">Unsold</SelectItem>
+											</SelectContent>
+										</Select>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+						<DialogFooter>
+							<Button type="button" variant="outline" onClick={handleClose}>
+								Cancel
+							</Button>
+							<Button
+								type="submit"
+								className="bg-[#1a5fd8] hover:bg-[#1a5fd8]/80"
+							>
+								{mode === "add" ? "Add" : "Update"}
+							</Button>
+						</DialogFooter>
+					</form>
+				</Form>
 			</DialogContent>
 		</Dialog>
 	);

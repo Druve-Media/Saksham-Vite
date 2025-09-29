@@ -1,5 +1,8 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -10,6 +13,14 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
 import {
 	Popover,
 	PopoverContent,
@@ -35,10 +46,22 @@ interface Props {
 		amenity_name: string;
 		booking_date: string;
 		booking_time: string;
+		user_name?: string;
+		time_duration?: number;
+		max_capacity?: number;
 	};
 	isEdit?: boolean;
+	isView?: boolean;
 	onSuccess?: () => void;
 }
+
+const formSchema = z.object({
+	amenityId: z.string().min(1, "Amenity is required"),
+	date: z.date({ message: "Date is required" }),
+	timeSlot: z.string().min(1, "Time slot is required"),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 const timeSlots = [
 	"08:00 AM",
@@ -95,39 +118,55 @@ export default function AddBookingAmenity({
 	onOpenChange,
 	booking,
 	isEdit = false,
+	isView = false,
 	onSuccess,
 }: Props) {
 	const { data: amenities = [] } = useGetAmenities();
 	const { mutate: addMutate, isPending: isAddPending } = useAddBooking();
 	const { mutate: updateMutate, isPending: isUpdatePending } =
 		useUpdateBooking();
-	const [form, setForm] = useState({
-		amenityId: "",
-		date: new Date(),
-		timeSlot: "",
+	const form = useForm<FormValues>({
+		resolver: zodResolver(formSchema),
+		mode: "onSubmit",
+		defaultValues: {
+			amenityId: "",
+			date: new Date(),
+			timeSlot: "",
+		},
 	});
 
 	useEffect(() => {
-		if (isEdit && booking && amenities.length > 0) {
-			const matchingAmenity = amenities.find(
-				(a) => a.amenity_name === booking.amenity_name,
-			);
-			setForm({
-				amenityId: matchingAmenity?.amenity_id || "",
-				date: new Date(booking.booking_date),
-				timeSlot: getSlotFromTime(booking.booking_time),
-			});
+		if (open) {
+			if ((isEdit || isView) && booking && amenities.length > 0) {
+				const matchingAmenity = amenities.find(
+					(a) => a.amenity_name === booking.amenity_name,
+				);
+				form.reset({
+					amenityId: matchingAmenity?.amenity_id || "",
+					date: new Date(booking.booking_date),
+					timeSlot: getSlotFromTime(booking.booking_time),
+				});
+			} else {
+				form.reset({
+					amenityId: "",
+					date: new Date(),
+					timeSlot: "",
+				});
+			}
 		}
-	}, [booking, isEdit, amenities]);
+	}, [open, booking, isEdit, isView, amenities, form]);
 
 	const isPending = isEdit ? isUpdatePending : isAddPending;
 
-	const handleSubmit = () => {
-		if (!form.amenityId || !form.timeSlot) return;
-		const bookingDate = form.date.toISOString().split("T")[0];
-		const bookingTime = slotToTime(form.timeSlot);
+	const onSubmit = (values: FormValues) => {
+		if (isView) {
+			onOpenChange(false);
+			return;
+		}
+		const bookingDate = values.date.toISOString().split("T")[0];
+		const bookingTime = slotToTime(values.timeSlot);
 		const payload = {
-			amenity_id: form.amenityId,
+			amenity_id: values.amenityId,
 			booking_date: bookingDate,
 			booking_time: bookingTime,
 		};
@@ -136,11 +175,7 @@ export default function AddBookingAmenity({
 				{ ...payload, booking_id: booking.booking_id },
 				{
 					onSuccess: () => {
-						setForm({
-							amenityId: "",
-							date: new Date(),
-							timeSlot: "",
-						});
+						form.reset();
 						onSuccess?.();
 					},
 				},
@@ -148,123 +183,166 @@ export default function AddBookingAmenity({
 		} else {
 			addMutate(payload, {
 				onSuccess: () => {
-					setForm({
-						amenityId: "",
-						date: new Date(),
-						timeSlot: "",
-					});
+					form.reset();
 					onSuccess?.();
 				},
 			});
 		}
 	};
 
+	const handleClose = () => {
+		form.reset();
+		onOpenChange(false);
+	};
+
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<Dialog open={open} onOpenChange={handleClose}>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
 					<DialogTitle>
-						{isEdit ? "Edit Booking" : "Add Book Amenity"}
+						{isView
+							? "View Booking"
+							: isEdit
+								? "Edit Booking"
+								: "Add Book Amenity"}
 					</DialogTitle>
 				</DialogHeader>
-				<div className="grid gap-4 py-4">
-					<div className="grid gap-2">
-						<label htmlFor="amenity" className="text-sm font-medium">
-							Choose Amenity *
-						</label>
-						<Select
-							value={form.amenityId}
-							onValueChange={(value) =>
-								setForm((prev) => ({ ...prev, amenityId: value }))
-							}
-						>
-							<SelectTrigger id="amenity">
-								<SelectValue placeholder="Select Amenity" />
-							</SelectTrigger>
-							<SelectContent>
-								{amenities.map((amenity) => (
-									<SelectItem
-										key={amenity.amenity_id}
-										value={amenity.amenity_id}
+				<Form {...form}>
+					<form
+						onSubmit={form.handleSubmit(onSubmit)}
+						className="space-y-4 py-4"
+					>
+						<FormField
+							control={form.control}
+							name="amenityId"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Choose Amenity *</FormLabel>
+									<Select
+										onValueChange={field.onChange}
+										value={field.value}
+										disabled={isView}
 									>
-										{amenity.amenity_name}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-					</div>
-					<div className="grid gap-2">
-						<label htmlFor="date" className="text-sm font-medium">
-							Booking Date *
-						</label>
-						<Popover>
-							<PopoverTrigger asChild>
-								<Button
-									variant="outline"
-									className={cn(
-										"w-full justify-start text-left font-normal",
-										!form.date && "text-muted-foreground",
-									)}
-								>
-									{form.date.toLocaleDateString("en-GB", {
-										day: "2-digit",
-										month: "long",
-										year: "numeric",
-									})}
-								</Button>
-							</PopoverTrigger>
-							<PopoverContent className="w-auto p-0" align="start">
-								<Calendar
-									mode="single"
-									selected={form.date}
-									onSelect={(date) => {
-										setForm((prev) => ({ ...prev, date: date || prev.date }));
-									}}
-									initialFocus
-								/>
-							</PopoverContent>
-						</Popover>
-					</div>
-					<div className="grid gap-2">
-						<span className="text-sm font-medium">Booking Time *</span>
-						<div className="grid grid-cols-4 gap-2">
-							{timeSlots.map((slot) => (
-								<Button
-									key={slot}
-									variant="outline"
-									className={cn(
-										"text-sm",
-										form.timeSlot === slot &&
-											"bg-[#ffb400] text-white border-[#ffb400]",
-									)}
-									onClick={() =>
-										setForm((prev) => ({ ...prev, timeSlot: slot }))
-									}
-								>
-									{slot}
-								</Button>
-							))}
-						</div>
-					</div>
-				</div>
-				<DialogFooter>
-					<Button
-						type="button"
-						onClick={handleSubmit}
-						disabled={isPending || !form.amenityId || !form.timeSlot}
-						className="bg-[#1a5fd8] hover:bg-[#1a5fd8]/80 cursor-pointer text-white"
-					>
-						{isPending ? "Saving..." : isEdit ? "Update" : "Save"}
-					</Button>
-					<Button
-						type="button"
-						variant="outline"
-						onClick={() => onOpenChange(false)}
-						className="border-[#ffb400] bg-[#ffb400] text-white hover:bg-[#ffb400]/80 cursor-pointer"
-					>
-						Cancel
-					</Button>
-				</DialogFooter>
+										<FormControl>
+											<SelectTrigger>
+												<SelectValue placeholder="Select Amenity" />
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{amenities.map((amenity) => (
+												<SelectItem
+													key={amenity.amenity_id}
+													value={amenity.amenity_id}
+												>
+													{amenity.amenity_name}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="date"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Booking Date *</FormLabel>
+									<FormControl>
+										<Popover>
+											<PopoverTrigger asChild>
+												<Button
+													variant="outline"
+													className={cn(
+														"w-full justify-start text-left font-normal",
+														!field.value && "text-muted-foreground",
+														isView && "cursor-not-allowed opacity-50",
+													)}
+													disabled={isView}
+												>
+													{field.value ? (
+														field.value.toLocaleDateString("en-GB", {
+															day: "2-digit",
+															month: "long",
+															year: "numeric",
+														})
+													) : (
+														<span>Pick a date</span>
+													)}
+												</Button>
+											</PopoverTrigger>
+											<PopoverContent className="w-auto p-0" align="start">
+												<Calendar
+													mode="single"
+													selected={field.value}
+													onSelect={field.onChange}
+													disabled={isView}
+													initialFocus
+												/>
+											</PopoverContent>
+										</Popover>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="timeSlot"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Booking Time *</FormLabel>
+									<FormControl>
+										<div className="grid grid-cols-4 gap-2">
+											{timeSlots.map((slot) => (
+												<Button
+													key={slot}
+													type="button"
+													variant="outline"
+													className={cn(
+														"text-sm",
+														field.value === slot &&
+															"bg-[#ffb400] text-white border-[#ffb400]",
+														isView && "cursor-not-allowed opacity-50",
+													)}
+													onClick={() => field.onChange(slot)}
+													disabled={isView}
+												>
+													{slot}
+												</Button>
+											))}
+										</div>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<DialogFooter>
+							<Button
+								type="button"
+								variant="outline"
+								onClick={handleClose}
+								className="border-[#ffb400] bg-[#ffb400] text-white hover:bg-[#ffb400]/80 cursor-pointer"
+							>
+								Cancel
+							</Button>
+							<Button
+								type="submit"
+								disabled={isPending || isView}
+								className="bg-[#1a5fd8] hover:bg-[#1a5fd8]/80 cursor-pointer text-white"
+							>
+								{isPending
+									? "Saving..."
+									: isView
+										? "Close"
+										: isEdit
+											? "Update"
+											: "Save"}
+							</Button>
+						</DialogFooter>
+					</form>
+				</Form>
 			</DialogContent>
 		</Dialog>
 	);

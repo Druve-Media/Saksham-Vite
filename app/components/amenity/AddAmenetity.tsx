@@ -1,4 +1,7 @@
-import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { type Resolver, useForm } from "react-hook-form";
+import * as z from "zod";
 
 type AmenityStatus =
 	| "Available"
@@ -15,8 +18,15 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
 	Select,
 	SelectContent,
@@ -27,6 +37,7 @@ import {
 import { useAddAmenity } from "@/hooks/amenities/useAddAmenity";
 import { useGetAmenityById } from "@/hooks/amenities/useGetAmenityById";
 import { useUpdateAmenity } from "@/hooks/amenities/useUpdateAmenity";
+import { useAuthStore } from "@/stores/auth-store";
 
 const amenityStatuses = [
 	"Available",
@@ -34,6 +45,22 @@ const amenityStatuses = [
 	"Under Maintenance",
 	"Out of Service",
 ];
+
+const formSchema = z.object({
+	amenity_name: z.string().min(1, "Amenity name is required"),
+	location: z.string().min(1, "Location is required"),
+	time_duration: z.coerce
+		.number()
+		.min(1, "Time duration must be at least 1 hour"),
+	max_capacity: z.coerce.number().min(1, "Max capacity must be at least 1"),
+	start_time: z.string().min(1, "Start time is required"),
+	end_time: z.string().min(1, "End time is required"),
+	amenity_status: z.enum(amenityStatuses as [string, ...string[]], {
+		message: "Status is required",
+	}),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 interface AddAmenityProps {
 	isOpen: boolean;
@@ -48,71 +75,74 @@ export default function AddAmenity({
 	amenityId,
 	onSuccess,
 }: AddAmenityProps) {
-	const [form, setForm] = useState({
-		amenity_name: "",
-		time_duration: 1,
-		max_capacity: 1,
-		amenity_status: "Available" as AmenityStatus,
-		start_time: "",
-		end_time: "",
-		location: "",
-	});
-
 	const isEdit = !!amenityId;
 	const { data: amenity, isLoading: isAmenityLoading } = useGetAmenityById(
 		amenityId || "",
 	);
 	const { mutate: addAmenity, isPending: isAdding } = useAddAmenity();
 	const { mutate: updateAmenity, isPending: isUpdating } = useUpdateAmenity();
+	const societyId = useAuthStore((s) => s.user?.society_id);
+
+	const form = useForm<FormValues>({
+		resolver: zodResolver(formSchema) as Resolver<FormValues>,
+		mode: "onSubmit",
+		defaultValues: {
+			amenity_name: "",
+			time_duration: 1,
+			max_capacity: 1,
+			amenity_status: "Available",
+			start_time: "",
+			end_time: "",
+			location: "",
+		},
+	});
 
 	useEffect(() => {
-		if (isEdit && amenity && !isAmenityLoading) {
-			const timeFormat = (timeStr: string) => {
-				if (timeStr) {
-					const parts = timeStr.split(":");
-					return `${parts[0]}:${parts[1]}`;
-				}
-				return "";
-			};
-			setForm({
-				amenity_name: amenity.amenity_name,
-				time_duration: amenity.time_duration,
-				max_capacity: amenity.max_capacity,
-				amenity_status: amenity.amenity_status as AmenityStatus,
-				start_time: timeFormat(amenity.start_time),
-				end_time: timeFormat(amenity.end_time),
-				location: amenity.location,
-			});
-		} else if (!isEdit && isOpen) {
-			setForm({
-				amenity_name: "",
-				time_duration: 1,
-				max_capacity: 1,
-				amenity_status: "Available",
-				start_time: "",
-				end_time: "",
-				location: "",
-			});
+		if (isOpen) {
+			if (isEdit && amenity && !isAmenityLoading) {
+				const timeFormat = (timeStr: string) => {
+					if (timeStr) {
+						const parts = timeStr.split(":");
+						return `${parts[0]}:${parts[1]}`;
+					}
+					return "";
+				};
+				form.reset({
+					amenity_name: amenity.amenity_name,
+					time_duration: amenity.time_duration,
+					max_capacity: amenity.max_capacity,
+					amenity_status: amenity.amenity_status as AmenityStatus,
+					start_time: timeFormat(amenity.start_time),
+					end_time: timeFormat(amenity.end_time),
+					location: amenity.location,
+				});
+			} else if (!isEdit) {
+				form.reset({
+					amenity_name: "",
+					time_duration: 1,
+					max_capacity: 1,
+					amenity_status: "Available",
+					start_time: "",
+					end_time: "",
+					location: "",
+				});
+			}
 		}
-	}, [isEdit, amenity, isAmenityLoading, isOpen]);
+	}, [isEdit, amenity, isAmenityLoading, isOpen, form]);
 
-	const handleSubmit = () => {
-		const startTime = form.start_time ? `${form.start_time}:00.000Z` : "";
-		const endTime = form.end_time ? `${form.end_time}:00.000Z` : "";
-
-		if (!form.amenity_name || !form.location || !startTime || !endTime) {
-			// TODO: Add toast error notification
-			return;
-		}
+	const onSubmit = (values: z.infer<typeof formSchema>) => {
+		const startTime = values.start_time ? `${values.start_time}:00.000Z` : "";
+		const endTime = values.end_time ? `${values.end_time}:00.000Z` : "";
 
 		const payload = {
-			amenity_name: form.amenity_name,
-			time_duration: form.time_duration,
-			max_capacity: form.max_capacity,
-			amenity_status: form.amenity_status,
+			amenity_name: values.amenity_name,
+			time_duration: values.time_duration,
+			max_capacity: values.max_capacity,
+			amenity_status: values.amenity_status,
 			start_time: startTime,
 			end_time: endTime,
-			location: form.location,
+			location: values.location,
+			society_id: societyId ?? "",
 			...(isEdit && { amenity_id: amenityId }),
 		};
 
@@ -134,6 +164,7 @@ export default function AddAmenity({
 	};
 
 	const handleClose = () => {
+		form.reset();
 		onClose();
 	};
 
@@ -152,125 +183,135 @@ export default function AddAmenity({
 							: "Add a new amenity or facility to the community."}
 					</DialogDescription>
 				</DialogHeader>
-				<div className="grid gap-4 py-4">
-					<div className="grid gap-2">
-						<Label htmlFor="amenity_name">Amenity Name *</Label>
-						<Input
-							id="amenity_name"
-							placeholder="e.g., Swimming Pool"
-							value={form.amenity_name}
-							onChange={(e) =>
-								setForm((f) => ({ ...f, amenity_name: e.target.value }))
-							}
-						/>
-					</div>
-					<div className="grid gap-2">
-						<Label htmlFor="location">Location *</Label>
-						<Input
-							id="location"
-							placeholder="e.g., Rooftop"
-							value={form.location}
-							onChange={(e) =>
-								setForm((f) => ({ ...f, location: e.target.value }))
-							}
-						/>
-					</div>
-					<div className="grid grid-cols-2 gap-4">
-						<div className="grid gap-2">
-							<Label htmlFor="time_duration">Time Duration (hours) *</Label>
-							<Input
-								id="time_duration"
-								type="number"
-								min="1"
-								value={form.time_duration}
-								onChange={(e) =>
-									setForm((f) => ({
-										...f,
-										time_duration: parseInt(e.target.value) || 1,
-									}))
-								}
-							/>
-						</div>
-						<div className="grid gap-2">
-							<Label htmlFor="max_capacity">Max Capacity *</Label>
-							<Input
-								id="max_capacity"
-								type="number"
-								min="1"
-								value={form.max_capacity}
-								onChange={(e) =>
-									setForm((f) => ({
-										...f,
-										max_capacity: parseInt(e.target.value) || 1,
-									}))
-								}
-							/>
-						</div>
-					</div>
-					<div className="grid grid-cols-2 gap-4">
-						<div className="grid gap-2">
-							<Label htmlFor="start_time">Start Time *</Label>
-							<Input
-								id="start_time"
-								type="time"
-								value={form.start_time}
-								onChange={(e) =>
-									setForm((f) => ({ ...f, start_time: e.target.value }))
-								}
-							/>
-						</div>
-						<div className="grid gap-2">
-							<Label htmlFor="end_time">End Time *</Label>
-							<Input
-								id="end_time"
-								type="time"
-								value={form.end_time}
-								onChange={(e) =>
-									setForm((f) => ({ ...f, end_time: e.target.value }))
-								}
-							/>
-						</div>
-					</div>
-					<div className="grid gap-2">
-						<Label htmlFor="amenity_status">Status *</Label>
-						<Select
-							value={form.amenity_status}
-							onValueChange={(value) =>
-								setForm((f) => ({
-									...f,
-									amenity_status: value as AmenityStatus,
-								}))
-							}
-						>
-							<SelectTrigger>
-								<SelectValue placeholder="Select Status" />
-							</SelectTrigger>
-							<SelectContent>
-								{amenityStatuses.map((status) => (
-									<SelectItem key={status} value={status}>
-										{status}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-					</div>
-				</div>
-				<DialogFooter>
-					<Button variant="outline" onClick={handleClose}>
-						Cancel
-					</Button>
-					<Button
-						onClick={handleSubmit}
-						disabled={isSubmitting || isAmenityLoading}
-						className="bg-[#1a5fd8] hover:bg-[#1a5fd8]/80"
+				<Form {...form}>
+					<form
+						onSubmit={form.handleSubmit(onSubmit)}
+						className="space-y-4 py-4"
 					>
-						{isSubmitting
-							? "Saving..."
-							: isEdit
-								? "Update Amenity"
-								: "Add Amenity"}
-					</Button>
-				</DialogFooter>
+						<FormField
+							control={form.control}
+							name="amenity_name"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Amenity Name *</FormLabel>
+									<FormControl>
+										<Input placeholder="e.g., Swimming Pool" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="location"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Location *</FormLabel>
+									<FormControl>
+										<Input placeholder="e.g., Rooftop" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<div className="grid grid-cols-2 gap-4">
+							<FormField
+								control={form.control}
+								name="time_duration"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Time Duration (hours) *</FormLabel>
+										<FormControl>
+											<Input type="number" min="1" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="max_capacity"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Max Capacity *</FormLabel>
+										<FormControl>
+											<Input type="number" min="1" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+						<div className="grid grid-cols-2 gap-4">
+							<FormField
+								control={form.control}
+								name="start_time"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Start Time *</FormLabel>
+										<FormControl>
+											<Input type="time" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="end_time"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>End Time *</FormLabel>
+										<FormControl>
+											<Input type="time" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+						<FormField
+							control={form.control}
+							name="amenity_status"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Status *</FormLabel>
+									<Select onValueChange={field.onChange} value={field.value}>
+										<FormControl>
+											<SelectTrigger>
+												<SelectValue placeholder="Select Status" />
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{amenityStatuses.map((status) => (
+												<SelectItem key={status} value={status}>
+													{status}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<DialogFooter>
+							<Button type="button" variant="outline" onClick={handleClose}>
+								Cancel
+							</Button>
+							<Button
+								type="submit"
+								disabled={isSubmitting || isAmenityLoading}
+								className="bg-[#1a5fd8] hover:bg-[#1a5fd8]/80"
+							>
+								{isSubmitting
+									? "Saving..."
+									: isEdit
+										? "Update Amenity"
+										: "Add Amenity"}
+							</Button>
+						</DialogFooter>
+					</form>
+				</Form>
 			</DialogContent>
 		</Dialog>
 	);

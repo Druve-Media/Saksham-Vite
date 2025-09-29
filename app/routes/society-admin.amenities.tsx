@@ -580,23 +580,16 @@
 // 	);
 // }
 
-import {
-	IconCalendar,
-	IconDownload,
-	IconEdit,
-	IconFilter,
-	IconMapPin,
-	IconPlus,
-	IconSearch,
-	IconSwimming,
-	IconTrash,
-	IconUsers,
-} from "@tabler/icons-react";
+import { IconEdit, IconEye, IconPlus, IconTrash } from "@tabler/icons-react";
+import type { ColumnDef, Row } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import AddAmenity from "@/components/amenity/AddAmenetity";
+import { CommonTable } from "@/components/CommonTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
 	Dialog,
 	DialogContent,
@@ -604,7 +597,6 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
 } from "@/components/ui/dialog";
 import {
 	DropdownMenu,
@@ -614,59 +606,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
 import { useDeleteAmenity } from "@/hooks/amenities/useDeleteAmenity";
 import type { Amenity } from "@/hooks/amenities/useGetAmenities";
 import { useGetAmenities } from "@/hooks/amenities/useGetAmenities";
-
-const amenityTypes = [
-	"Recreation",
-	"Fitness",
-	"Event Space",
-	"Sports",
-	"Wellness",
-];
-const statuses = ["Available", "Booked", "Under Maintenance", "Out of Service"];
+import { useGetAmenityById } from "@/hooks/amenities/useGetAmenityById";
 
 export default function AmenitiesPage() {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [editAmenityId, setEditAmenityId] = useState<string | null>(null);
-	const [searchTerm, setSearchTerm] = useState("");
-	const [typeFilter, setTypeFilter] = useState("all");
-	const [statusFilter, setStatusFilter] = useState("all");
+	const [viewAmenityId, setViewAmenityId] = useState<string | null>(null);
 
 	const { data: amenities = [], isLoading } = useGetAmenities();
 
 	const { mutate: deleteAmenity } = useDeleteAmenity();
+	const { data: viewAmenityData } = useGetAmenityById(viewAmenityId || "");
 
 	const handleExport = () => {
 		console.log("Exporting amenities data...");
 	};
-
-	const filteredAmenities = amenities.filter((amenity: Amenity) => {
-		const matchesSearch =
-			amenity.amenity_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			amenity.location.toLowerCase().includes(searchTerm.toLowerCase());
-		const matchesType = typeFilter === "all";
-		const matchesStatus =
-			statusFilter === "all" ||
-			amenity.amenity_status.toLowerCase().includes(statusFilter.toLowerCase());
-		return matchesSearch && matchesType && matchesStatus;
-	});
 
 	const getStatusColor = (status: string) => {
 		switch (status.toLowerCase()) {
@@ -682,198 +639,261 @@ export default function AmenitiesPage() {
 				return "bg-gray-100 text-gray-800";
 		}
 	};
-
-	const getTypeIcon = (type: string) => {
-		switch (type.toLowerCase()) {
-			case "recreation":
-				return <IconSwimming className="h-4 w-4 text-[#1a5fd8]" />;
-			case "fitness":
-				return <IconUsers className="h-4 w-4 text-[#1a5fd8]" />;
-			case "sports":
-				return <IconUsers className="h-4 w-4 text-[#ffb400]" />;
-			case "event space":
-				return <IconCalendar className="h-4 w-4 text-[#1a5fd8]" />;
-			default:
-				return <IconMapPin className="h-4 w-4 text-gray-600" />;
-		}
-	};
+	const columns: ColumnDef<Amenity>[] = [
+		{
+			id: "select",
+			header: ({ table }) => (
+				<Checkbox
+					checked={
+						table.getIsAllPageRowsSelected() ||
+						(table.getIsSomePageRowsSelected() && "indeterminate")
+					}
+					onCheckedChange={(value: boolean | "indeterminate") =>
+						table.toggleAllPageRowsSelected(!!value)
+					}
+					aria-label="Select all"
+				/>
+			),
+			cell: ({ row }) => (
+				<Checkbox
+					checked={row.getIsSelected()}
+					onCheckedChange={(value: boolean | "indeterminate") =>
+						row.toggleSelected(!!value)
+					}
+					aria-label="Select row"
+				/>
+			),
+			enableSorting: false,
+			enableHiding: false,
+		},
+		{
+			accessorKey: "amenity_name",
+			header: "Amenity",
+		},
+		{
+			accessorKey: "location",
+			header: "Location",
+		},
+		{
+			accessorKey: "max_capacity",
+			header: "Max Capacity",
+		},
+		{
+			accessorKey: "time_duration",
+			header: "Time Duration",
+		},
+		{
+			accessorKey: "start_time",
+			header: "Start Time",
+		},
+		{
+			accessorKey: "end_time",
+			header: "End Time",
+		},
+		{
+			accessorKey: "amenity_status",
+			header: "Status",
+			cell: ({ row }: { row: Row<Amenity> }) => (
+				<Badge className={getStatusColor(row.original.amenity_status)}>
+					{row.original.amenity_status}
+				</Badge>
+			),
+		},
+		{
+			id: "actions",
+			header: "Action",
+			cell: ({ row }: { row: Row<Amenity> }) => (
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+							<span className="sr-only">Open menu</span>
+							<MoreHorizontal className="h-4 w-4" />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						<DropdownMenuItem
+							onClick={() => setViewAmenityId(row.original.amenity_id)}
+						>
+							<IconEye className="mr-2 h-4 w-4" />
+							View
+						</DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={() => setEditAmenityId(row.original.amenity_id)}
+						>
+							<IconEdit className="mr-2 h-4 w-4" />
+							Edit
+						</DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={() => deleteAmenity(row.original.amenity_id)}
+							className="focus:text-red-600 focus:bg-red-50"
+						>
+							<IconTrash className="mr-2 h-4 w-4" />
+							Delete
+						</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
+			),
+		},
+	];
 
 	return (
-		<div className="space-y-6">
-			{/* Header */}
-			<div className="flex items-center justify-between">
-				<div>
-					<h1 className="text-2xl font-semibold">Amenities Management</h1>
-					<p className="text-muted-foreground">
-						Manage community amenities and facilities
-					</p>
-				</div>
-				<Button
-					onClick={() => setIsDialogOpen(true)}
-					className="bg-[#ffb400] hover:bg-[#ffb400]/80"
+		<>
+			<div className="space-y-6 gap-4 p-4">
+				{/* Header */}
+				{/* <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">Amenities Management</h1>
+          <p className="text-muted-foreground">
+            Manage community amenities and facilities
+          </p>
+        </div>
+        <Button
+          onClick={() => setIsDialogOpen(true)}
+          className="bg-[#ffb400] hover:bg-[#ffb400]/80"
+        >
+          <IconPlus className="mr-2 h-4 w-4" />
+          Add Amenity
+        </Button>
+      </div> */}
+				<AddAmenity
+					isOpen={isDialogOpen || !!editAmenityId}
+					onClose={() => {
+						setIsDialogOpen(false);
+						setEditAmenityId(null);
+					}}
+					amenityId={editAmenityId}
+					onSuccess={() => {
+						setIsDialogOpen(false);
+						setEditAmenityId(null);
+					}}
+				/>
+
+				{/* View Dialog */}
+				<Dialog
+					open={!!viewAmenityId}
+					onOpenChange={() => setViewAmenityId(null)}
 				>
-					<IconPlus className="mr-2 h-4 w-4" />
-					Add Amenity
-				</Button>
-			</div>
-			<AddAmenity
-				isOpen={isDialogOpen || !!editAmenityId}
-				onClose={() => {
-					setIsDialogOpen(false);
-					setEditAmenityId(null);
-				}}
-				amenityId={editAmenityId}
-				onSuccess={() => {
-					setIsDialogOpen(false);
-					setEditAmenityId(null);
-				}}
-			/>
+					<DialogContent className="sm:max-w-lg">
+						<DialogHeader>
+							<DialogTitle>Amenity Details</DialogTitle>
+							<DialogDescription>
+								View the details of the amenity.
+							</DialogDescription>
+						</DialogHeader>
+						<div className="space-y-4 py-4">
+							<div className="grid gap-2">
+								<Label>Amenity Name</Label>
+								<Input
+									value={viewAmenityData?.amenity_name || ""}
+									readOnly
+									className="bg-muted"
+								/>
+							</div>
+							<div className="grid gap-2">
+								<Label>Location</Label>
+								<Input
+									value={viewAmenityData?.location || ""}
+									readOnly
+									className="bg-muted"
+								/>
+							</div>
+							<div className="grid grid-cols-2 gap-4">
+								<div className="grid gap-2">
+									<Label>Max Capacity</Label>
+									<Input
+										value={viewAmenityData?.max_capacity || ""}
+										readOnly
+										className="bg-muted"
+									/>
+								</div>
+								<div className="grid gap-2">
+									<Label>Time Duration (hours)</Label>
+									<Input
+										value={viewAmenityData?.time_duration || ""}
+										readOnly
+										className="bg-muted"
+									/>
+								</div>
+							</div>
+							<div className="grid grid-cols-2 gap-4">
+								<div className="grid gap-2">
+									<Label>Start Time</Label>
+									<Input
+										value={viewAmenityData?.start_time || ""}
+										readOnly
+										className="bg-muted"
+									/>
+								</div>
+								<div className="grid gap-2">
+									<Label>End Time</Label>
+									<Input
+										value={viewAmenityData?.end_time || ""}
+										readOnly
+										className="bg-muted"
+									/>
+								</div>
+							</div>
+							<div className="grid gap-2">
+								<Label>Status</Label>
+								<Badge
+									className={getStatusColor(
+										viewAmenityData?.amenity_status || "",
+									)}
+								>
+									{viewAmenityData?.amenity_status}
+								</Badge>
+							</div>
+						</div>
+						<DialogFooter>
+							<Button onClick={() => setViewAmenityId(null)}>Close</Button>
+						</DialogFooter>
+					</DialogContent>
+				</Dialog>
 
-			{/* Search + Filters */}
-			<div className="flex items-center gap-4">
-				<div className="relative flex-1">
-					<IconSearch className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-					<Input
-						placeholder="Search amenities..."
-						className="pl-10"
-						value={searchTerm}
-						onChange={(e) => setSearchTerm(e.target.value)}
-					/>
+				{/* Stats */}
+				<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+					<Card>
+						<CardContent className="p-4">
+							<p className="text-sm text-muted-foreground">Total Amenities</p>
+							<p className="text-2xl font-bold">{amenities.length}</p>
+						</CardContent>
+					</Card>
+					<Card>
+						<CardContent className="p-4">
+							<p className="text-sm text-muted-foreground">Available</p>
+							<p className="text-2xl font-bold text-[#1a5fd8]">
+								{
+									amenities.filter((a) => a.amenity_status === "Available")
+										.length
+								}
+							</p>
+						</CardContent>
+					</Card>
 				</div>
-				<Select value={typeFilter} onValueChange={setTypeFilter}>
-					<SelectTrigger className="w-40">
-						<SelectValue placeholder="Filter by Type" />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="all">All Types</SelectItem>
-						{amenityTypes.map((type) => (
-							<SelectItem key={type} value={type.toLowerCase()}>
-								{type}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-				<Select value={statusFilter} onValueChange={setStatusFilter}>
-					<SelectTrigger className="w-40">
-						<SelectValue placeholder="Filter by Status" />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="all">All Status</SelectItem>
-						{statuses.map((status) => (
-							<SelectItem key={status} value={status.toLowerCase()}>
-								{status}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-				<Button variant="outline" size="sm">
-					<IconFilter className="mr-2 h-4 w-4" />
-					FILTERS
-				</Button>
-				<Button variant="outline" size="sm" onClick={handleExport}>
-					<IconDownload className="mr-2 h-4 w-4" />
-					Export
-				</Button>
 			</div>
 
-			{/* Stats */}
-			<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+			{isLoading ? (
 				<Card>
-					<CardContent className="p-4">
-						<p className="text-sm text-muted-foreground">Total Amenities</p>
-						<p className="text-2xl font-bold">{amenities.length}</p>
+					<CardContent className="p-4 text-center">
+						Loading amenities...
 					</CardContent>
 				</Card>
-				<Card>
-					<CardContent className="p-4">
-						<p className="text-sm text-muted-foreground">Available</p>
-						<p className="text-2xl font-bold text-[#1a5fd8]">
-							{amenities.filter((a) => a.amenity_status === "Available").length}
-						</p>
-					</CardContent>
-				</Card>
-			</div>
-
-			{/* Table */}
-			<Card>
-				<CardContent className="p-0">
-					<div className="overflow-x-auto w-full">
-						<Table className="min-w-[1200px]">
-							<TableHeader>
-								<TableRow>
-									<TableHead>AMENITY</TableHead>
-									<TableHead>LOCATION</TableHead>
-									<TableHead>MAX CAPACITY</TableHead>
-									<TableHead>TIME DURATION</TableHead>
-									<TableHead>START TIME</TableHead>
-									<TableHead>END TIME</TableHead>
-									<TableHead>STATUS</TableHead>
-									<TableHead className="w-[100px]">ACTION</TableHead>
-								</TableRow>
-							</TableHeader>
-							<TableBody>
-								{isLoading ? (
-									<TableRow>
-										<TableCell colSpan={8} className="text-center">
-											Loading...
-										</TableCell>
-									</TableRow>
-								) : (
-									filteredAmenities.map((amenity) => (
-										<TableRow key={amenity.amenity_id}>
-											<TableCell className="font-medium">
-												{amenity.amenity_name}
-											</TableCell>
-											<TableCell>{amenity.location}</TableCell>
-											<TableCell>{amenity.max_capacity}</TableCell>
-											<TableCell>{amenity.time_duration}</TableCell>
-											<TableCell>{amenity.start_time}</TableCell>
-											<TableCell>{amenity.end_time}</TableCell>
-											<TableCell>
-												<Badge
-													className={getStatusColor(amenity.amenity_status)}
-												>
-													{amenity.amenity_status}
-												</Badge>
-											</TableCell>
-											<TableCell>
-												<DropdownMenu>
-													<DropdownMenuTrigger asChild>
-														<Button
-															variant="ghost"
-															size="sm"
-															className="h-8 w-8 p-0"
-														>
-															<span className="sr-only">Open menu</span>
-															<IconEdit className="h-4 w-4" />
-														</Button>
-													</DropdownMenuTrigger>
-													<DropdownMenuContent align="end">
-														<DropdownMenuItem
-															onClick={() =>
-																setEditAmenityId(amenity.amenity_id)
-															}
-														>
-															Update
-														</DropdownMenuItem>
-														<DropdownMenuItem
-															onClick={() => deleteAmenity(amenity.amenity_id)}
-															className="focus:text-red-600 focus:bg-red-50"
-														>
-															<IconTrash className="mr-2 h-4 w-4" />
-															Delete
-														</DropdownMenuItem>
-													</DropdownMenuContent>
-												</DropdownMenu>
-											</TableCell>
-										</TableRow>
-									))
-								)}
-							</TableBody>
-						</Table>
-					</div>
-				</CardContent>
-			</Card>
-		</div>
+			) : (
+				<CommonTable
+					columns={columns}
+					data={amenities}
+					page={1}
+					pageSize={amenities.length || 10}
+					total={amenities.length}
+					onPageChange={() => {}}
+					searchable={true}
+					addButtonLabel="Add Amenity"
+					onAddClick={() => setIsDialogOpen(true)}
+					exportButtonLabel="Export"
+					onExportClick={handleExport}
+					checkbox={true}
+				/>
+			)}
+		</>
 	);
 }

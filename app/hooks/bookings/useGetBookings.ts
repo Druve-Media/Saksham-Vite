@@ -24,8 +24,7 @@ export function useGetBookings() {
 	const query = useQuery<Booking[]>({
 		queryKey: ["bookings", societyId],
 		queryFn: () =>
-			get<Booking[]>(`/bookings/all-booking/`, { society_id: societyId }),
-		// ("/bookings/all-booking",   { society_id: societyId }),
+			get<Booking[]>(`/bookings/all-booking`, { society_id: societyId }),
 		enabled: !!societyId,
 	});
 

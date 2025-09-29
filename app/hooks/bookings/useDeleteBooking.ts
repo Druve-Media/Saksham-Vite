@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import apiClient from "@/components/configurations/axios-config/Axiosclient";
+import { deleteReq } from "@/components/configurations/axios-config/Axiosclient";
 import { useToast } from "@/components/ui/use-toast";
 
 export const useDeleteBooking = () => {
@@ -8,7 +8,7 @@ export const useDeleteBooking = () => {
 
 	return useMutation({
 		mutationFn: (booking_id: string) =>
-			apiClient.delete(`/bookings/${booking_id}`),
+			deleteReq(`/bookings/delete-booking?booking_id=${booking_id}`),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["bookings"] });
 			toast({

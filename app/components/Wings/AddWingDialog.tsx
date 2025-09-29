@@ -1,5 +1,8 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
+import { type Resolver, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -9,8 +12,15 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useAddWing } from "@/hooks/wings/useAddWing";
 import type { Wing } from "@/hooks/wings/useGetWings";
 import { useUpdateWing } from "@/hooks/wings/useUpdateWing";
@@ -22,76 +32,85 @@ interface AddWingDialogProps {
 	initialData?: Wing;
 }
 
+const formSchema = z.object({
+	wing_name: z.string().min(1, "Wing name is required"),
+	floors: z
+		.string()
+		.min(1, "Number of floors is required")
+		.refine((val) => !isNaN(Number(val)), "Must be a valid number")
+		.refine((val) => Number(val) >= 1, "Number of floors must be at least 1"),
+	number_of_apartments: z
+		.string()
+		.min(1, "Number of apartments is required")
+		.refine((val) => !isNaN(Number(val)), "Must be a valid number")
+		.refine(
+			(val) => Number(val) >= 1,
+			"Number of apartments must be at least 1",
+		),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
 export function AddWingDialog({
 	open,
 	onOpenChange,
 	mode,
 	initialData,
 }: AddWingDialogProps) {
-	const [formData, setFormData] = React.useState({
-		wing_name: "",
-		floors: "",
-		number_of_apartments: "",
+	const addWingMutation = useAddWing();
+	const updateWingMutation = useUpdateWing();
+
+	const form = useForm<FormValues>({
+		resolver: zodResolver(formSchema) as Resolver<FormValues, any, FormValues>,
+		mode: "onSubmit",
+		defaultValues: {
+			wing_name: "",
+			floors: "",
+			number_of_apartments: "",
+		},
 	});
 
 	React.useEffect(() => {
-		if (open && initialData) {
-			setFormData({
-				wing_name: initialData.wing_name,
-				floors: initialData.floors.toString(),
-				number_of_apartments: initialData.number_of_apartments.toString(),
-			});
-		} else if (open && mode === "add") {
-			setFormData({ wing_name: "", floors: "", number_of_apartments: "" });
+		if (open) {
+			if (initialData) {
+				form.reset({
+					wing_name: initialData.wing_name,
+					floors: initialData.floors.toString(),
+					number_of_apartments: initialData.number_of_apartments.toString(),
+				});
+			} else if (mode === "add") {
+				form.reset({
+					wing_name: "",
+					floors: "",
+					number_of_apartments: "",
+				});
+			}
 		}
-	}, [open, mode, initialData]);
-
-	const addWingMutation = useAddWing();
-	const updateWingMutation = useUpdateWing();
+	}, [open, mode, initialData, form]);
 
 	const isEdit = mode === "edit";
 	const isPending = isEdit
 		? updateWingMutation.isPending
 		: addWingMutation.isPending;
 
-	const handleInputChange = (field: keyof typeof formData, value: string) => {
-		setFormData((prev) => ({ ...prev, [field]: value }));
-	};
-
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		const wingName = formData.wing_name.trim();
-		const floors = parseInt(formData.floors, 10);
-		const numberOfApartments = parseInt(formData.number_of_apartments, 10);
-
-		if (
-			!wingName ||
-			isNaN(floors) ||
-			isNaN(numberOfApartments) ||
-			floors <= 0 ||
-			numberOfApartments <= 0
-		) {
-			toast.error("Please fill all fields with valid positive numbers.");
-			return;
-		}
+	const onSubmit = (values: FormValues) => {
+		const wingName = values.wing_name.trim();
+		const floorsNum = Number(values.floors);
+		const apartmentsNum = Number(values.number_of_apartments);
 
 		if (isEdit) {
 			updateWingMutation.mutate(
 				{
 					wing_id: initialData!.wing_id,
 					wing_name: wingName,
-					floors,
-					number_of_apartments: numberOfApartments,
+					floors: floorsNum,
+					number_of_apartments: apartmentsNum,
 				},
 				{
 					onSuccess: () => {
 						toast.success("Wing updated successfully!");
+						form.reset();
 						onOpenChange(false);
-						setFormData({
-							wing_name: "",
-							floors: "",
-							number_of_apartments: "",
-						});
 					},
 					onError: (error: any) => {
 						const errorMsg =
@@ -105,18 +124,14 @@ export function AddWingDialog({
 			addWingMutation.mutate(
 				{
 					wing_name: wingName,
-					floors,
-					number_of_apartments: numberOfApartments,
+					floors: floorsNum,
+					number_of_apartments: apartmentsNum,
 				},
 				{
 					onSuccess: () => {
 						toast.success("Wing added successfully!");
+						form.reset();
 						onOpenChange(false);
-						setFormData({
-							wing_name: "",
-							floors: "",
-							number_of_apartments: "",
-						});
 					},
 					onError: (error: any) => {
 						const errorMsg =
@@ -129,8 +144,13 @@ export function AddWingDialog({
 		}
 	};
 
+	const handleClose = () => {
+		form.reset();
+		onOpenChange(false);
+	};
+
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<Dialog open={open} onOpenChange={handleClose}>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
 					<DialogTitle>{isEdit ? "Edit Wing" : "Add New Wing"}</DialogTitle>
@@ -140,64 +160,75 @@ export function AddWingDialog({
 							: "Enter the details for the new wing. This will be added to your society."}
 					</DialogDescription>
 				</DialogHeader>
-				<form onSubmit={handleSubmit} className="space-y-4">
-					<div className="space-y-2">
-						<Label htmlFor="wing_name">Wing Name</Label>
-						<Input
-							id="wing_name"
-							placeholder="e.g., Wing A"
-							value={formData.wing_name}
-							onChange={(e) => handleInputChange("wing_name", e.target.value)}
-							required
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+						<FormField
+							control={form.control}
+							name="wing_name"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Wing Name *</FormLabel>
+									<FormControl>
+										<Input placeholder="e.g., Wing A" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
 						/>
-					</div>
-					<div className="grid grid-cols-2 gap-4">
-						<div className="space-y-2">
-							<Label htmlFor="floors">Number of Floors</Label>
-							<Input
-								id="floors"
-								type="number"
-								min="1"
-								placeholder="e.g., 10"
-								value={formData.floors}
-								onChange={(e) => handleInputChange("floors", e.target.value)}
-								required
+						<div className="grid grid-cols-2 gap-4">
+							<FormField
+								control={form.control}
+								name="floors"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Number of Floors *</FormLabel>
+										<FormControl>
+											<Input
+												type="number"
+												min="1"
+												placeholder="e.g., 10"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="number_of_apartments"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Number of Apartments *</FormLabel>
+										<FormControl>
+											<Input
+												type="number"
+												min="1"
+												placeholder="e.g., 50"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
 							/>
 						</div>
-						<div className="space-y-2">
-							<Label htmlFor="number_of_apartments">Number of Apartments</Label>
-							<Input
-								id="number_of_apartments"
-								type="number"
-								min="1"
-								placeholder="e.g., 50"
-								value={formData.number_of_apartments}
-								onChange={(e) =>
-									handleInputChange("number_of_apartments", e.target.value)
-								}
-								required
-							/>
-						</div>
-					</div>
-					<DialogFooter>
-						<Button
-							type="button"
-							variant="outline"
-							onClick={() => onOpenChange(false)}
-						>
-							Cancel
-						</Button>
-						<Button type="submit" disabled={isPending}>
-							{isPending
-								? isEdit
-									? "Updating..."
-									: "Adding..."
-								: isEdit
-									? "Update Wing"
-									: "Add Wing"}
-						</Button>
-					</DialogFooter>
-				</form>
+						<DialogFooter>
+							<Button type="button" variant="outline" onClick={handleClose}>
+								Cancel
+							</Button>
+							<Button type="submit" disabled={isPending}>
+								{isPending
+									? isEdit
+										? "Updating..."
+										: "Adding..."
+									: isEdit
+										? "Update Wing"
+										: "Add Wing"}
+							</Button>
+						</DialogFooter>
+					</form>
+				</Form>
 			</DialogContent>
 		</Dialog>
 	);
